@@ -11,6 +11,7 @@ import AboutPage from "./pages/about-page"
 import ContactPage from "./pages/contact-page"
 import SchemesPage from "./pages/schemes-page"
 import MarketPage from "./pages/market-page"
+import SatellitePage from "./pages/satellite-page"
 
 interface MainAppProps {
   user: any
@@ -33,6 +34,8 @@ export default function MainApp({ user, onLogout }: MainAppProps) {
         return <SchemesPage language={language} />
       case "market":
         return <MarketPage language={language} user={user} />
+      case "satellite":
+        return <SatellitePage language={language} user={user} />
       case "profile":
         return <ProfilePage language={language} user={user} onLogout={onLogout} />
       case "about":

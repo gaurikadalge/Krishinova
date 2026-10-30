@@ -10,6 +10,8 @@ from models.water_calculator import calculate_water_requirement
 from models.intercrop_model import get_intercrop_recommendation
 from models.domain import Farm, Plot, SoilProfile, WaterAsset, FarmBudget
 from services.farm_service import farm_service
+from models.satellite import FarmSatelliteSummary
+from services.satellite_service import satellite_service
 
 app = FastAPI(title='Krishinova ML Backend')
 
@@ -94,6 +96,22 @@ def update_water_assets(farm_id: str, assets: list[WaterAsset]):
     if not updated:
         raise HTTPException(status_code=404, detail='Farm not found')
     return updated
+
+# --- Satellite Farm Monitoring Endpoints ---
+@app.get('/api/satellite/analysis/{farm_id}', response_model=FarmSatelliteSummary)
+def get_satellite_analysis(farm_id: str):
+    analysis = satellite_service.get_latest_farm_analysis(farm_id)
+    if not analysis:
+        raise HTTPException(status_code=404, detail='Satellite data not found for farm')
+    return analysis
+
+@app.get('/api/satellite/latest/default', response_model=FarmSatelliteSummary)
+def get_default_satellite_analysis():
+    farm = farm_service.get_default_farm()
+    analysis = satellite_service.get_latest_farm_analysis(farm.id)
+    if not analysis:
+        raise HTTPException(status_code=404, detail='Satellite analysis unavailable')
+    return analysis
 
 # --- ML & Prediction Endpoints ---
 @app.post('/predict/crop')

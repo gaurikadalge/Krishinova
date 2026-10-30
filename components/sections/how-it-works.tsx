@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { FileSpreadsheet, Cpu, Droplets, TrendingUp } from "lucide-react"
+import { FileSpreadsheet, Cpu, Droplets, TrendingUp, ArrowRight } from "lucide-react"
 import { useReveal } from "@/components/ui-extras/use-reveal"
 
 interface HowItWorksProps {
@@ -71,71 +71,62 @@ export default function HowItWorks({ language, className = "" }: HowItWorksProps
     <section
       ref={ref}
       dir={isRtl ? "rtl" : "ltr"}
-      className={`w-full py-16 md:py-24 bg-transparent relative overflow-hidden ${className}`}
+      className={`w-full py-20 md:py-28 bg-[#F5F7F3] border-b border-[#E5EBE5] relative overflow-hidden ${className}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className={`text-center max-w-3xl mx-auto mb-16 transition-all duration-700 ${isRevealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-white/20 dark:bg-white/10 backdrop-blur-xl text-white border border-white/30 mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#c8f53c] shrink-0" />
+        <div
+          className={`text-center max-w-3xl mx-auto mb-16 transition-all duration-700 ${
+            isRevealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          }`}
+        >
+          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold bg-[#DDF3E6] text-[#073B2A] border border-[#16A36A]/20 mb-3 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-[#16A36A] animate-pulse shrink-0" />
             {t.badge}
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white drop-shadow-md tracking-tight font-heading leading-tight mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#25352C] tracking-tight font-heading leading-tight mb-4">
             {t.headingMain}{" "}
-            <span className="font-[family-name:var(--font-serif)] italic font-normal text-[#c8f53c] drop-shadow-sm">
+            <span className="text-[#087A4B] font-serif italic font-normal">
               {t.headingItalic}
             </span>
           </h2>
-          <p className="text-base sm:text-lg text-white/85">{t.description}</p>
+          <p className="text-base sm:text-lg text-[#68766C] leading-relaxed">{t.description}</p>
         </div>
 
         {/* Timeline grid */}
-        <div className="relative">
-          {/* Dashed connector line (desktop) */}
-          <div aria-hidden="true" className="hidden lg:block absolute top-[72px] left-[12%] right-[12%] h-[2px] border-t-2 border-dashed border-white/30 z-0" />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
-            {t.steps.map((item, index) => {
-              const Icon = icons[index]
-              return (
-                <div
-                  key={item.step}
-                  style={{ transitionDelay: `${index * 140}ms` }}
-                  className={`relative p-6 rounded-3xl overflow-hidden
-                    bg-white/15 dark:bg-black/35
-                    backdrop-blur-2xl border border-white/25 dark:border-white/10
-                    shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),0_12px_40px_-8px_rgba(0,0,0,0.3)]
-                    hover:border-[#c8f53c]/40 hover:-translate-y-2 hover:shadow-[0_0_30px_-5px_rgba(200,245,60,0.25),inset_0_1px_0_0_rgba(255,255,255,0.5),0_16px_50px_-8px_rgba(0,0,0,0.4)]
-                    transition-all duration-500 group flex flex-col justify-between
-                    ${isRevealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-                >
-                  {/* Subtle glass shine on hover */}
-                  <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
-                    <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-white/15 via-transparent to-transparent rotate-12 group-hover:translate-x-full group-hover:translate-y-full transition-transform duration-700" />
-                  </div>
-
-                  <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="w-13 h-13 rounded-2xl bg-[#c8f53c]/20 backdrop-blur-md border border-[#c8f53c]/30 group-hover:bg-[#c8f53c] group-hover:border-[#c8f53c] text-[#c8f53c] group-hover:text-[#0a1f13] flex items-center justify-center transition-all duration-300 shadow-sm">
-                        <Icon className="w-6 h-6 transition-transform group-hover:scale-110" />
-                      </div>
-                      <span className="font-heading font-extrabold text-3xl text-white/30 group-hover:text-[#c8f53c] transition-colors">
-                        {item.step}
-                      </span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+          {t.steps.map((item, index) => {
+            const Icon = icons[index]
+            return (
+              <div
+                key={item.step}
+                style={{ transitionDelay: `${index * 100}ms` }}
+                className={`relative p-7 rounded-3xl bg-white border border-[#E5EBE5] shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between ${
+                  isRevealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="w-13 h-13 rounded-2xl bg-[#DDF3E6] text-[#087A4B] group-hover:bg-[#087A4B] group-hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm">
+                      <Icon className="w-6 h-6" />
                     </div>
-                    <h3 className="text-xl font-bold font-heading text-white drop-shadow-sm mb-3 group-hover:text-[#c8f53c] transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-white/85 leading-relaxed">{item.desc}</p>
+                    <span className="font-heading font-extrabold text-3xl text-[#087A4B]/30 group-hover:text-[#087A4B] transition-colors">
+                      {item.step}
+                    </span>
                   </div>
 
-                  <div className="mt-6 pt-4 border-t border-white/15 flex items-center justify-between text-xs text-white/70">
-                    <span className="font-medium text-white/80">Step {item.step}</span>
-                    <span className="w-2 h-2 rounded-full bg-white/30 group-hover:bg-[#c8f53c] group-hover:scale-150 transition-all group-hover:shadow-[0_0_10px_rgba(200,245,60,0.6)]" />
-                  </div>
+                  <h3 className="text-xl font-bold font-heading text-[#25352C] mb-2.5 group-hover:text-[#087A4B] transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#68766C] leading-relaxed">{item.desc}</p>
                 </div>
-              )
-            })}
-          </div>
+
+                <div className="mt-6 pt-4 border-t border-[#F0F5F0] flex items-center justify-between text-xs text-[#087A4B] font-bold">
+                  <span>Step {item.step}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>

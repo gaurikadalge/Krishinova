@@ -53,6 +53,21 @@
   --radius: 1rem;
 }
 
+/* Explicit class mappings to ensure 100% readability across Tailwind v4 */
+.text-foreground {
+  color: #25352C !important;
+}
+.text-muted-foreground {
+  color: #68766C !important;
+}
+.bg-card {
+  background-color: #FFFFFF !important;
+  color: #25352C !important;
+}
+.border-border {
+  border-color: #E5EBE5 !important;
+}
+
 body {
   background-color: var(--background);
   color: var(--text-primary);

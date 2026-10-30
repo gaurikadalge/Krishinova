@@ -7,18 +7,28 @@ import LoginForm from "./auth/login-form"
 
 interface AuthPagesProps {
   onAuthSuccess: (userData: any) => void
+  onBackToHome?: () => void
 }
 
-export default function AuthPages({ onAuthSuccess }: AuthPagesProps) {
-  const [isSignUp, setIsSignUp] = useState(true)
+export default function AuthPages({ onAuthSuccess, onBackToHome }: AuthPagesProps) {
+  const [isSignUp, setIsSignUp] = useState(false) // Default to Login for faster demo entry
   const { language } = useLanguage()
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#F5F7F3]">
       {isSignUp ? (
-        <SignUpForm language={language} onAuthSuccess={onAuthSuccess} onToggleMode={() => setIsSignUp(false)} />
+        <SignUpForm
+          language={language}
+          onAuthSuccess={onAuthSuccess}
+          onToggleMode={() => setIsSignUp(false)}
+        />
       ) : (
-        <LoginForm language={language} onAuthSuccess={onAuthSuccess} onToggleMode={() => setIsSignUp(true)} />
+        <LoginForm
+          language={language}
+          onAuthSuccess={onAuthSuccess}
+          onToggleMode={() => setIsSignUp(true)}
+          onBackToHome={onBackToHome}
+        />
       )}
     </div>
   )

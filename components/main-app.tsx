@@ -17,9 +17,10 @@ import MarketPage from "./pages/market-page"
 interface MainAppProps {
   user: any
   onLogout: () => void
+  onBackToHome?: () => void
 }
 
-export default function MainApp({ user, onLogout }: MainAppProps) {
+export default function MainApp({ user, onLogout, onBackToHome }: MainAppProps) {
   const [currentPage, setCurrentPage] = useState("dashboard")
   const [isPlotModalOpen, setIsPlotModalOpen] = useState(false)
   const { language, setLanguage } = useLanguage()
@@ -74,7 +75,7 @@ export default function MainApp({ user, onLogout }: MainAppProps) {
       case "market":
         return <MarketPage language={language} user={user} />
       case "assistant":
-        return <OllamaAssistant />
+        return <OllamaAssistant language={language} />
       default:
         return (
           <ExecutiveDashboard
@@ -93,6 +94,8 @@ export default function MainApp({ user, onLogout }: MainAppProps) {
       language={language}
       onLanguageChange={setLanguage}
       user={user}
+      onLogout={onLogout}
+      onBackToHome={onBackToHome}
     >
       {renderContent()}
 

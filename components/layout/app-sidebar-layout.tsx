@@ -18,6 +18,9 @@ import {
   Globe,
   Menu,
   X,
+  LogOut,
+  Home,
+
 } from "lucide-react"
 import type { Language } from "../language-context"
 import { dictionary } from "../translations"
@@ -28,6 +31,8 @@ interface AppSidebarLayoutProps {
   language: Language
   onLanguageChange: (lang: Language) => void
   user: any
+  onLogout?: () => void
+  onBackToHome?: () => void
   children: React.ReactNode
 }
 
@@ -37,6 +42,8 @@ export default function AppSidebarLayout({
   language,
   onLanguageChange,
   user,
+  onLogout,
+  onBackToHome,
   children,
 }: AppSidebarLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -194,6 +201,30 @@ export default function AppSidebarLayout({
               <Bell className="w-4 h-4" />
               <span className="w-2.5 h-2.5 rounded-full bg-[#D94B45] absolute top-1.5 right-1.5 ring-2 ring-white" />
             </button>
+
+            {/* Public Site Button */}
+            {onBackToHome && (
+              <button
+                onClick={onBackToHome}
+                title="View Public Presentation Website"
+                className="px-3 py-1.5 rounded-xl bg-[#F5F7F3] border border-[#E5EBE5] text-[#073B2A] hover:bg-[#DDF3E6] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Home className="w-3.5 h-3.5 text-[#087A4B]" />
+                <span className="hidden md:inline">Public Site</span>
+              </button>
+            )}
+
+            {/* Logout Button */}
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                title="Sign Out to Main Website"
+                className="px-3 py-1.5 rounded-xl bg-[#FFF1F0] border border-[#D94B45]/20 text-[#D94B45] hover:bg-[#D94B45] hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span className="hidden md:inline">Logout</span>
+              </button>
+            )}
 
             {/* User Profile Pill */}
             <div className="flex items-center gap-2.5 pl-2 border-l border-[#E5EBE5]">

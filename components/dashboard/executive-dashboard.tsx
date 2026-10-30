@@ -28,6 +28,8 @@ import {
 import dynamic from "next/dynamic"
 import type { Language } from "../language-context"
 import { dictionary } from "../translations"
+import { AGRICULTURAL_REGIONS, AgroRegion } from "../regions-data"
+import { Sun, CloudRain, CloudLightning } from "lucide-react"
 
 const FarmSatelliteMap = dynamic(() => import("../satellite-map"), {
   ssr: false,
@@ -50,6 +52,7 @@ export default function ExecutiveDashboard({
   onOpenPlotModal,
 }: ExecutiveDashboardProps) {
   const [activeLayer, setActiveLayer] = useState<"ndvi" | "true" | "false">("ndvi")
+  const [selectedRegion, setSelectedRegion] = useState<AgroRegion>(AGRICULTURAL_REGIONS[0])
   const d = dictionary[language] || dictionary.en
 
   // Live Weather State
@@ -164,7 +167,7 @@ export default function ExecutiveDashboard({
           </div>
           <div>
             <span className="text-[11px] text-[#68766C] block font-semibold">{d.currentCrop}</span>
-            <span className="text-sm font-bold text-[#25352C] block">Soybean</span>
+            <span className="text-sm font-bold text-[#25352C] block truncate max-w-[110px]">{selectedRegion.crop.split("/")[0]}</span>
           </div>
         </div>
 
@@ -184,7 +187,7 @@ export default function ExecutiveDashboard({
           </div>
           <div>
             <span className="text-[11px] text-[#68766C] block font-semibold">{d.totalArea}</span>
-            <span className="text-sm font-bold text-[#25352C] block">5.2 Acres</span>
+            <span className="text-sm font-bold text-[#25352C] block">{selectedRegion.area}</span>
           </div>
         </div>
 
@@ -194,7 +197,7 @@ export default function ExecutiveDashboard({
           </div>
           <div>
             <span className="text-[11px] text-[#68766C] block font-semibold">{d.ndviVigor}</span>
-            <span className="text-sm font-bold text-[#16A36A] block">{d.goodVigor}</span>
+            <span className="text-sm font-bold text-[#16A36A] block">{selectedRegion.ndviScore >= 0.7 ? "High" : "Good"} ({selectedRegion.ndviScore})</span>
           </div>
         </div>
 
@@ -260,13 +263,13 @@ export default function ExecutiveDashboard({
           {/* Interactive Satellite Canvas */}
           <div className="h-[360px] w-full rounded-2xl overflow-hidden relative border border-[#E5EBE5] shadow-inner">
             <FarmSatelliteMap
-              latitude={18.1512}
-              longitude={74.5824}
-              locationName="Malegaon Khurd, Baramati"
-              plotName="North Plot (Soybean)"
-              crop="Soybean (JS 335)"
+              latitude={selectedRegion.latitude}
+              longitude={selectedRegion.longitude}
+              locationName={selectedRegion.name}
+              plotName={selectedRegion.plotName}
+              crop={selectedRegion.crop}
               mode={activeLayer}
-              ndviScore={0.68}
+              ndviScore={selectedRegion.ndviScore}
             />
           </div>
         </div>
@@ -289,13 +292,13 @@ export default function ExecutiveDashboard({
 
             <div className="grid grid-cols-4 gap-2.5">
               <div className="p-3 bg-[#F5F7F3] rounded-2xl border border-[#E5EBE5] text-center">
-                <span className="text-xl font-extrabold text-[#16A36A] block">0.68</span>
+                <span className="text-xl font-extrabold text-[#16A36A] block">{selectedRegion.ndviScore}</span>
                 <span className="text-[10px] text-[#087A4B] block font-semibold">↑ +0.12</span>
                 <span className="text-[10px] text-[#68766C] mt-1 block">{d.ndviVigor}</span>
               </div>
 
               <div className="p-3 bg-[#F5F7F3] rounded-2xl border border-[#E5EBE5] text-center">
-                <span className="text-xl font-extrabold text-[#2878D0] block">0.54</span>
+                <span className="text-xl font-extrabold text-[#2878D0] block">{selectedRegion.ndmiScore}</span>
                 <span className="text-[10px] text-[#2878D0] block font-semibold">↑ +0.08</span>
                 <span className="text-[10px] text-[#68766C] mt-1 block">{d.ndmiIndex}</span>
               </div>
@@ -366,7 +369,7 @@ export default function ExecutiveDashboard({
           </div>
 
           <div className="flex items-center gap-4 py-2">
-            <span className="text-4xl">{liveWeather?.icon || "⛅"}</span>
+            <div className="w-12 h-12 rounded-2xl bg-[#EBF3FC] flex items-center justify-center text-[#2878D0]"><CloudSun className="w-7 h-7" /></div>
             <div>
               <span className="text-3xl font-extrabold text-[#25352C]">
                 {liveWeather ? `${liveWeather.temperature}°C` : "30.9°C"}
@@ -420,7 +423,15 @@ export default function ExecutiveDashboard({
             ).map((f, i) => (
               <div key={i} className="p-1.5 bg-[#F5F7F3] rounded-xl flex flex-col items-center gap-1 border border-[#E5EBE5]">
                 <span className="text-[10px] text-[#68766C] font-semibold">{f.day}</span>
-                <span className="text-base">{f.icon}</span>
+                <span className="my-0.5">
+                  {f.rain.startsWith("0") ? (
+                    <Sun className="w-4 h-4 text-amber-500" />
+                  ) : f.rain.startsWith("1") ? (
+                    <CloudSun className="w-4 h-4 text-[#2878D0]" />
+                  ) : (
+                    <CloudRain className="w-4 h-4 text-[#2878D0]" />
+                  )}
+                </span>
                 <span className="text-[10px] font-bold text-[#25352C]">{f.temp.split("/")[0]}</span>
                 <span className="text-[9px] text-[#2878D0] font-semibold">{f.rain}</span>
               </div>

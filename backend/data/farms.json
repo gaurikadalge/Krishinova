@@ -49,6 +49,25 @@
           "organic_carbon_pct": 0.52,
           "is_measured": true
         }
+      },
+      {
+        "id": "plot-1793353545739",
+        "name": "Kharif Block",
+        "area_acres": 3.0,
+        "current_crop": "Wheat",
+        "variety": "JS 335",
+        "sowing_date": "2026-07-01",
+        "growth_stage": "development",
+        "irrigation_method": "drip",
+        "soil": {
+          "soil_type": "Clay Loam",
+          "ph": 7.2,
+          "nitrogen": 180.0,
+          "phosphorus": 22.0,
+          "potassium": 240.0,
+          "organic_carbon_pct": 0.55,
+          "is_measured": true
+        }
       }
     ],
     "water_assets": [
@@ -72,6 +91,6 @@
       "spent_inr": 22000.0,
       "remaining_inr": 38000.0
     },
-    "last_updated": "2026-10-30 11:34:53"
+    "last_updated": "2026-10-30 15:15:45"
   }
 ]

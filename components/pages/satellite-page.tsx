@@ -12,6 +12,7 @@ const FarmSatelliteMap = dynamic(() => import("../satellite-map"), {
   ),
 })
 import type { Language } from "../language-context"
+import { AGRICULTURAL_REGIONS, AgroRegion } from "../regions-data"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
@@ -145,6 +146,7 @@ export default function SatellitePage({ language, user }: SatellitePageProps) {
   const [loading, setLoading] = useState(true)
   const [selectedPlotIndex, setSelectedPlotIndex] = useState(0)
   const [imageMode, setImageMode] = useState<"true" | "false" | "ndvi">("ndvi")
+  const [selectedRegion, setSelectedRegion] = useState<AgroRegion>(AGRICULTURAL_REGIONS[0])
 
   const fetchSatelliteData = async () => {
     setLoading(true)
@@ -273,6 +275,25 @@ export default function SatellitePage({ language, user }: SatellitePageProps) {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            {/* Interactive Region Selector */}
+            <div className="flex items-center gap-2 bg-card border border-border px-3 py-1.5 rounded-xl text-xs shadow-sm">
+              <span className="font-semibold text-muted-foreground">Select Region:</span>
+              <select
+                value={selectedRegion.id}
+                onChange={(e) => {
+                  const found = AGRICULTURAL_REGIONS.find((r) => r.id === e.target.value)
+                  if (found) setSelectedRegion(found)
+                }}
+                className="bg-transparent font-bold text-primary focus:outline-none cursor-pointer"
+              >
+                {AGRICULTURAL_REGIONS.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name} ({r.district})
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="text-right hidden sm:block">
               <span className="text-xs text-muted-foreground block">{t.acquisitionDate}</span>
               <span className="text-sm font-semibold text-foreground flex items-center gap-1 justify-end">
@@ -420,13 +441,13 @@ export default function SatellitePage({ language, user }: SatellitePageProps) {
               {/* Real Satellite View with Cadastral Plot Boundary Overlay */}
               <div className="h-[420px] w-full">
                 <FarmSatelliteMap
-                  latitude={selectedPlotIndex === 0 ? 18.1512 : 18.1545}
-                  longitude={selectedPlotIndex === 0 ? 74.5824 : 74.5860}
-                  locationName="Malegaon Khurd, Baramati, Pune (Maharashtra)"
-                  plotName={activePlot.plot_name}
-                  crop={activePlot.crop}
+                  latitude={selectedRegion.latitude}
+                  longitude={selectedRegion.longitude}
+                  locationName={`${selectedRegion.name}, ${selectedRegion.district}`}
+                  plotName={`${selectedRegion.plotName}`}
+                  crop={selectedRegion.crop}
                   mode={imageMode}
-                  ndviScore={activePlot.indices.mean_ndvi}
+                  ndviScore={selectedRegion.ndviScore}
                 />
               </div>
             </div>

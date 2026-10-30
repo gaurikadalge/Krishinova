@@ -10,24 +10,53 @@ import {
   Cpu,
 } from "lucide-react"
 
-export default function OllamaAssistant() {
+import type { Language } from "../language-context"
+
+interface OllamaAssistantProps {
+  language?: Language
+}
+
+export default function OllamaAssistant({ language = "en" }: OllamaAssistantProps) {
+  const welcomeText =
+    language === "mr"
+      ? "नमस्कार! मी तुमचा कृषिनोव्हा AI सल्लागार आहे. तुमच्या शेताच्या डिजिटल ट्विन डेटाच्या आधारे मी अचूक मार्गदर्शन करतो. आज तुमच्या सोयाबीन किंवा कांदा पिकासाठी काय मदत हवी आहे?"
+      : language === "hi"
+      ? "नमस्ते! मैं आपका कृषिनोवा AI सहायक हूँ। आपके डिजिटल ट्विन डेटा के आधार पर मैं आपकी सेवा में तैयार हूँ। आज आपके खेत में क्या सहायता चाहिए?"
+      : language === "ur"
+      ? "سلام! میں آپ کا کرشی نووا AI معاون ہوں۔ ڈیجیٹل ٹوئن ڈیٹا کے مطابق آپ کی مدد کے لیے حاضر ہوں۔"
+      : "Namaste! I am your Krishinova AI Assistant, powered by local LLM (Ollama) and grounded in your digital twin telemetry. How can I help you with your Soybean or Onion plots today?"
+
   const [messages, setMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([
     {
       role: "assistant",
-      content:
-        "Namaste! I am your Krishinova AI Assistant, powered by local LLM (Ollama) and grounded in your digital twin telemetry. How can I help you with your Soybean or Onion plots today?",
+      content: welcomeText,
     },
   ])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [ollamaConnected, setOllamaConnected] = useState<boolean | null>(null)
 
-  const quickPrompts = [
-    "What is the irrigation requirement for my Soybean plot under this dry spell?",
-    "Should I apply fertilizer to the Onion plot this week?",
-    "Explain my current NDVI score (0.68) in Marathi or Hindi.",
-    "How much water will I save if I switch to deficit drip irrigation?",
-  ]
+  const quickPrompts =
+    language === "mr"
+      ? [
+          "या पावसाच्या खंडात सोयाबीन प्लॉटसाठी सिंचनाची काय गरज आहे?",
+          "या आठवड्यात कांदा पिकाला खत द्यावे का?",
+          "सध्याचा NDVI स्कोअर (०.६८) चा मराठीत अर्थ सांगा.",
+          "नियंत्रित ठिबक सिंचन वापरल्यास किती पाण्याची बचत होईल?",
+        ]
+      : language === "hi"
+      ? [
+          "इस सूखे के दौर में सोयाबीन खेत के लिए पानी की क्या आवश्यकता है?",
+          "क्या इस सप्ताह प्याज में उर्वरक देना चाहिए?",
+          "वर्तमान NDVI स्कोर (0.68) का हिंदी में मतलब समझाएं।",
+          "ड्रिप सिंचाई से कितना पानी बचेगा?",
+        ]
+      : [
+          "What is the irrigation requirement for my Soybean plot under this dry spell?",
+          "Should I apply fertilizer to the Onion plot this week?",
+          "Explain my current NDVI score (0.68) in Marathi or Hindi.",
+          "How much water will I save if I switch to deficit drip irrigation?",
+        ]
 
   const handleSend = async (questionText?: string) => {
     const query = questionText || input

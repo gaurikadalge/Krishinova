@@ -251,8 +251,8 @@ export default function WeatherPage({ language }: WeatherPageProps) {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           {/* Main Temp & Condition */}
           <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-2xl bg-[#F5F7F3] border border-[#E5EBE5] flex items-center justify-center text-5xl shadow-inner">
-              {currentIcon}
+            <div className="w-20 h-20 rounded-2xl bg-[#EBF3FC] border border-[#2878D0]/20 flex items-center justify-center text-[#2878D0] shadow-sm">
+              <CloudSun className="w-10 h-10" />
             </div>
             <div>
               <div className="flex items-baseline gap-3">
@@ -338,7 +338,15 @@ export default function WeatherPage({ language }: WeatherPageProps) {
                   </div>
 
                   <div className="my-3 text-center">
-                    <span className="text-3xl block">{item.icon || "⛅"}</span>
+                    <div className="w-10 h-10 mx-auto rounded-xl bg-[#F5F7F3] flex items-center justify-center">
+                      {item.rain_mm > 5 ? (
+                        <CloudRain className="w-6 h-6 text-[#2878D0]" />
+                      ) : item.rain_mm > 0 ? (
+                        <CloudSun className="w-6 h-6 text-[#2878D0]" />
+                      ) : (
+                        <Sun className="w-6 h-6 text-amber-500" />
+                      )}
+                    </div>
                     <span className="text-xs font-medium text-[#68766C] mt-1 block">{item.condition}</span>
                   </div>
                 </div>

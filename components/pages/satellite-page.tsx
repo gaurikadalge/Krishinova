@@ -1,6 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import dynamic from "next/dynamic"
+
+const FarmSatelliteMap = dynamic(() => import("../satellite-map"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full min-h-[380px] rounded-2xl bg-muted/60 animate-pulse flex items-center justify-center text-xs text-muted-foreground">
+      Acquiring Satellite Stream & Map Coordinates...
+    </div>
+  ),
+})
 import type { Language } from "../language-context"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -178,9 +188,9 @@ export default function SatellitePage({ language, user }: SatellitePageProps) {
           acquisition_date: "2026-10-27",
           cloud_cover_pct: 2.4,
           resolution_meters: 10,
-          true_color_url: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80",
-          false_color_url: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=800&q=80",
-          ndvi_map_url: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=800&q=80",
+          true_color_url: "/Land.jpeg",
+          false_color_url: "/crop.jpeg",
+          ndvi_map_url: "/images/water-management.jpg",
         },
         indices: {
           mean_ndvi: 0.68,
@@ -213,9 +223,9 @@ export default function SatellitePage({ language, user }: SatellitePageProps) {
           acquisition_date: "2026-10-27",
           cloud_cover_pct: 2.4,
           resolution_meters: 10,
-          true_color_url: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80",
-          false_color_url: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=800&q=80",
-          ndvi_map_url: "https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=800&q=80",
+          true_color_url: "/Land.jpeg",
+          false_color_url: "/crop.jpeg",
+          ndvi_map_url: "/images/water-management.jpg",
         },
         indices: {
           mean_ndvi: 0.46,
@@ -407,32 +417,17 @@ export default function SatellitePage({ language, user }: SatellitePageProps) {
                 </div>
               </div>
 
-              {/* Satellite Frame Container */}
-              <div className="relative rounded-2xl overflow-hidden aspect-[16/10] bg-black/60 border border-border group shadow-inner">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={getActiveImage()}
-                  alt="Satellite Observation"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              {/* Real Satellite View with Cadastral Plot Boundary Overlay */}
+              <div className="h-[420px] w-full">
+                <FarmSatelliteMap
+                  latitude={selectedPlotIndex === 0 ? 18.1512 : 18.1545}
+                  longitude={selectedPlotIndex === 0 ? 74.5824 : 74.5860}
+                  locationName="Malegaon Khurd, Baramati, Pune (Maharashtra)"
+                  plotName={activePlot.plot_name}
+                  crop={activePlot.crop}
+                  mode={imageMode}
+                  ndviScore={activePlot.indices.mean_ndvi}
                 />
-
-                {/* Overlaid Plot Boundary Badge */}
-                <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/20 text-white text-xs flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>Cadastral Boundary Overlay Active</span>
-                </div>
-
-                {/* Bottom Spectral Legend */}
-                <div className="absolute bottom-3 left-3 right-3 bg-background/85 backdrop-blur-md p-3 rounded-xl border border-border/80 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground">NDVI Scale:</span>
-                    <div className="h-3 w-28 rounded-full bg-gradient-to-r from-amber-500 via-lime-400 to-emerald-600" />
-                    <span className="font-mono text-[11px] font-bold text-foreground">0.2 ➔ 0.8+</span>
-                  </div>
-                  <span className="text-muted-foreground text-[11px] hidden sm:inline">
-                    Pass valid for: {scene.acquisition_date}
-                  </span>
-                </div>
               </div>
             </div>
 

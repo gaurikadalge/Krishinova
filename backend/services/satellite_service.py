@@ -93,9 +93,9 @@ class SatelliteService:
                 acquisition_date=ref_date,
                 cloud_cover_pct=2.4,
                 resolution_meters=10,
-                true_color_url="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80",
-                false_color_url="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=800&q=80",
-                ndvi_map_url="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=800&q=80",
+                true_color_url="/Land.jpeg",
+                false_color_url="/crop.jpeg",
+                ndvi_map_url="/images/water-management.jpg",
                 bounds=bounds,
             )
 

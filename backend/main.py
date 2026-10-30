@@ -8,6 +8,8 @@ import os
 
 from models.water_calculator import calculate_water_requirement
 from models.intercrop_model import get_intercrop_recommendation
+from models.domain import Farm, Plot, SoilProfile, WaterAsset, FarmBudget
+from services.farm_service import farm_service
 
 app = FastAPI(title='Krishinova ML Backend')
 
@@ -39,7 +41,6 @@ class CropPredictionRequest(BaseModel):
     P: float
     K: float
     ph: float
-    # List of yearly weather data for the past 4 years
     yearly_temperatures: list[float]
     yearly_humidities: list[float]
     yearly_rainfalls: list[float]
@@ -56,6 +57,45 @@ class WaterPredictionRequest(BaseModel):
 def read_root():
     return {'message': 'Welcome to Krishinova ML API'}
 
+# --- Farm Profile & Digital Twin Domain Endpoints ---
+@app.get('/api/farms/default', response_model=Farm)
+def get_default_farm():
+    return farm_service.get_default_farm()
+
+@app.get('/api/farms/{farm_id}', response_model=Farm)
+def get_farm(farm_id: str):
+    farm = farm_service.get_by_id(farm_id)
+    if not farm:
+        raise HTTPException(status_code=404, detail='Farm not found')
+    return farm
+
+@app.put('/api/farms/{farm_id}', response_model=Farm)
+def update_farm(farm_id: str, farm: Farm):
+    farm.id = farm_id
+    return farm_service.update_farm(farm)
+
+@app.post('/api/farms/{farm_id}/plots', response_model=Farm)
+def add_or_update_plot(farm_id: str, plot: Plot):
+    updated = farm_service.add_plot(farm_id, plot)
+    if not updated:
+        raise HTTPException(status_code=404, detail='Farm not found')
+    return updated
+
+@app.put('/api/farms/{farm_id}/budget', response_model=Farm)
+def update_farm_budget(farm_id: str, budget: FarmBudget):
+    updated = farm_service.update_budget(farm_id, budget)
+    if not updated:
+        raise HTTPException(status_code=404, detail='Farm not found')
+    return updated
+
+@app.put('/api/farms/{farm_id}/water-assets', response_model=Farm)
+def update_water_assets(farm_id: str, assets: list[WaterAsset]):
+    updated = farm_service.update_water_assets(farm_id, assets)
+    if not updated:
+        raise HTTPException(status_code=404, detail='Farm not found')
+    return updated
+
+# --- ML & Prediction Endpoints ---
 @app.post('/predict/crop')
 def predict_crop(data: CropPredictionRequest):
     if model is None or le is None:

@@ -1,0 +1,77 @@
+[
+  {
+    "id": "farm-mh-001",
+    "name": "Sahyadri Krishi Farm",
+    "farmer_name": "Ganesh Kadlag",
+    "phone": "+91 98765 43210",
+    "state": "Maharashtra",
+    "district": "Pune",
+    "taluka": "Baramati",
+    "village": "Malegaon Khurd",
+    "latitude": 18.1512,
+    "longitude": 74.5824,
+    "total_area_acres": 4.5,
+    "plots": [
+      {
+        "id": "plot-1",
+        "name": "North Plot - Kharif Cash Crop",
+        "area_acres": 2.5,
+        "current_crop": "Soybean",
+        "variety": "JS 335",
+        "sowing_date": "2026-06-25",
+        "growth_stage": "mid_season",
+        "irrigation_method": "drip",
+        "soil": {
+          "soil_type": "Medium Deep Black (Vertisol)",
+          "ph": 7.4,
+          "nitrogen": 195.0,
+          "phosphorus": 24.0,
+          "potassium": 280.0,
+          "organic_carbon_pct": 0.58,
+          "is_measured": true
+        }
+      },
+      {
+        "id": "plot-2",
+        "name": "South Valley Plot",
+        "area_acres": 2.0,
+        "current_crop": "Onion",
+        "variety": "Bhima Super",
+        "sowing_date": "2026-08-10",
+        "growth_stage": "development",
+        "irrigation_method": "sprinkler",
+        "soil": {
+          "soil_type": "Clay Loam",
+          "ph": 7.1,
+          "nitrogen": 170.0,
+          "phosphorus": 19.5,
+          "potassium": 210.0,
+          "organic_carbon_pct": 0.52,
+          "is_measured": true
+        }
+      }
+    ],
+    "water_assets": [
+      {
+        "id": "wa-1",
+        "source_type": "farm_pond",
+        "current_storage_liters": 65000.0,
+        "max_capacity_liters": 100000.0,
+        "daily_replenishment_liters": 0.0
+      },
+      {
+        "id": "wa-2",
+        "source_type": "borewell",
+        "current_storage_liters": 15000.0,
+        "max_capacity_liters": 20000.0,
+        "daily_replenishment_liters": 3000.0
+      }
+    ],
+    "budget": {
+      "total_budget_inr": 60000.0,
+      "spent_inr": 22000.0,
+      "remaining_inr": 38000.0
+    },
+    "last_updated": "2026-10-30 11:34:53"
+  }
+]

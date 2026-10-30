@@ -12,6 +12,8 @@ from models.domain import Farm, Plot, SoilProfile, WaterAsset, FarmBudget
 from services.farm_service import farm_service
 from models.satellite import FarmSatelliteSummary
 from services.satellite_service import satellite_service
+from services.weather_service import weather_service
+from services.news_service import news_service
 
 app = FastAPI(title='Krishinova ML Backend')
 
@@ -96,6 +98,15 @@ def update_water_assets(farm_id: str, assets: list[WaterAsset]):
     if not updated:
         raise HTTPException(status_code=404, detail='Farm not found')
     return updated
+
+# --- Live Weather & News Intelligence Endpoints ---
+@app.get('/api/weather/live')
+def get_live_weather(lat: float = 18.1512, lon: float = 74.5824):
+    return weather_service.get_live_weather(lat=lat, lon=lon)
+
+@app.get('/api/news/advisories')
+def get_agri_advisories():
+    return news_service.get_agri_intelligence()
 
 # --- Satellite Farm Monitoring Endpoints ---
 @app.get('/api/satellite/analysis/{farm_id}', response_model=FarmSatelliteSummary)

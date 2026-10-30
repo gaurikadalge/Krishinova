@@ -14,7 +14,7 @@ export default function AuthPages({ onAuthSuccess }: AuthPagesProps) {
   const { language } = useLanguage()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-amber-50 to-green-100">
+    <div className="min-h-screen bg-background">
       {isSignUp ? (
         <SignUpForm language={language} onAuthSuccess={onAuthSuccess} onToggleMode={() => setIsSignUp(false)} />
       ) : (

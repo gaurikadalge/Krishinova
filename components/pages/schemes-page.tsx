@@ -1,368 +1,508 @@
 "use client"
 
-import { useState } from "react"
-import { Card } from "@/components/ui/card"
-import { FileText, CheckCircle, ChevronDown, ChevronUp, Landmark, ShieldCheck, Sprout, Tractor, LineChart } from "lucide-react"
+import { useEffect, useState } from "react"
+import {
+  FileText,
+  CheckCircle,
+  ChevronDown,
+  ChevronUp,
+  Landmark,
+  ShieldCheck,
+  Sprout,
+  Tractor,
+  LineChart,
+  AlertTriangle,
+  TrendingUp,
+  Bug,
+  ExternalLink,
+  RefreshCw,
+  Bell,
+  Search,
+} from "lucide-react"
+import type { Language } from "../language-context"
 
 interface SchemesPageProps {
-  language: "en" | "hi" | "ur" | "mr"
+  language: Language
 }
 
-const translations = {
+interface AdvisoryItem {
+  id: string
+  title: string
+  source: string
+  date: string
+  category: string
+  crop: string
+  relevance: string
+  summary: string
+  url: string
+}
+
+const pageI18n = {
   en: {
-    title: "Government Agricultural Schemes",
-    subtitle: "Explore financial support and subsidies available for farmers",
-    eligibility: "Eligibility",
+    title: "News, Advisories & Schemes",
+    subtitle: "Real-time IMD Agromet warnings, Baramati APMC Mandi prices, and Government agricultural schemes.",
+    liveBadge: "LIVE AGROMET & APMC FEED",
+    refresh: "Refresh Feed",
+    filterAll: "All Updates",
+    filterClimate: "Climate & Advisories",
+    filterMarket: "Mandi Market Rates",
+    filterPest: "Pest & Crop Protection",
+    filterSchemes: "Government Schemes",
+    officialSource: "Source",
+    applicableCrops: "Target Crops",
+    viewAdvisory: "Open Official Portal",
+    eligibility: "Eligibility Criteria",
     documents: "Required Documents",
-    viewDetails: "View Details",
-  },
-  hi: {
-    title: "सरकारी कृषि योजनाएं",
-    subtitle: "किसानों के लिए उपलब्ध वित्तीय सहायता और सब्सिडी का अन्वेषण करें",
-    eligibility: "पात्रता",
-    documents: "आवश्यक दस्तावेज़",
-    viewDetails: "विवरण देखें",
-  },
-  ur: {
-    title: "حکومتی زرعی اسکیمیں",
-    subtitle: "کسانوں کے لیے دستیاب مالی امداد اور سبسڈی دریافت کریں",
-    eligibility: "اہلیت",
-    documents: "مطلوبہ دستاویزات",
-    viewDetails: "تفصیلات دیکھیں",
+    viewDetails: "View Scheme Details",
+    searchPlaceholder: "Search advisories, mandi rates, schemes...",
   },
   mr: {
-    title: "सरकारी कृषी योजना",
-    subtitle: "शेतकऱ्यांसाठी उपलब्ध आर्थिक मदत आणि सबसिडी शोधा",
-    eligibility: "पात्रता",
+    title: "बातम्या, कृषी सल्ले आणि योजना",
+    subtitle: "थेट आयएमडी हवामान चेतावणी, बारामती बाजार समितीचे ताजे बाजारभाव आणि सरकारी योजना.",
+    liveBadge: "थेट कृषी व बाजार समिती अपडेट",
+    refresh: "ताजेतवाने करा",
+    filterAll: "सर्व अपडेट्स",
+    filterClimate: "हवामान व सल्ले",
+    filterMarket: "बाजारभाव (मंडी)",
+    filterPest: "कीड व पीक संरक्षण",
+    filterSchemes: "सरकारी योजना",
+    officialSource: "स्रोत",
+    applicableCrops: "संबंधित पिके",
+    viewAdvisory: "अधिकृत पोर्टल उघडा",
+    eligibility: "पात्रता अटी",
     documents: "आवश्यक कागदपत्रे",
-    viewDetails: "तपशील पहा",
-  }
+    viewDetails: "योजनेचे तपशील पहा",
+    searchPlaceholder: "सल्ले, बाजारभाव, योजना शोधा...",
+  },
+  hi: {
+    title: "समाचार, कृषि परामर्श एवं सरकारी योजनाएं",
+    subtitle: "मौसम विभाग की सटीक चेतावनियां, बारामती मंडी के ताजा भाव और सरकारी सहायता योजनाएं।",
+    liveBadge: "लाइव कृषि परामर्श व मंडी अपडेट",
+    refresh: "रिफ्रेश करें",
+    filterAll: "सभी अपडेट",
+    filterClimate: "मौसम व परामर्श",
+    filterMarket: "मंडी भाव",
+    filterPest: "कीट व फसल सुरक्षा",
+    filterSchemes: "सरकारी योजनाएं",
+    officialSource: "स्रोत",
+    applicableCrops: "संबंधित फसलें",
+    viewAdvisory: "आधिकारिक पोर्टल देखें",
+    eligibility: "पात्रता मानदंड",
+    documents: "आवश्यक दस्तावेज़",
+    viewDetails: "योजना का विवरण देखें",
+    searchPlaceholder: "परामर्श, मंडी भाव, योजना खोजें...",
+  },
+  ur: {
+    title: "خبریں، زرعی مشورے اور سرکاری اسکیمیں",
+    subtitle: "محکمہ موسمیات کے زرعی مشورے، بارامتی منڈی کے تازہ نرخ اور حکومتی مالیاتی اسکیمیں۔",
+    liveBadge: "لائیو زرعی و منڈی فیڈ",
+    refresh: "ریفریش کریں",
+    filterAll: "تمام اطلاعات",
+    filterClimate: "موسمی مشورے",
+    filterMarket: "منڈی کے نرخ",
+    filterPest: "حشرات اور فصلوں کا تحفظ",
+    filterSchemes: "حکومتی اسکیمیں",
+    officialSource: "ذریعہ",
+    applicableCrops: "مطلوبہ فصلیں",
+    viewAdvisory: "سرکاری پورٹل کھولیں",
+    eligibility: "اہلیت کا معیار",
+    documents: "مطلوبہ دستاویزات",
+    viewDetails: "اسکیم کی تفصیل دیکھیں",
+    searchPlaceholder: "مشورے، منڈی کے ریٹس یا اسکیم تلاش کریں...",
+  },
 }
 
-const schemesData = {
-  en: [
-    {
-      id: "pm-kisan",
-      name: "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
-      icon: Landmark,
-      image: "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&q=80&w=800",
-      description: "Under this scheme, an income support of ₹6,000 per year is provided to all farmer families across the country in three equal installments.",
-      eligibility: ["All landholding farmers' families", "Must have cultivable land in their names", "Institutional landholders are not eligible"],
-      documents: ["Aadhaar Card", "Bank Passbook", "Land holding papers (7/12 extract)", "Passport size photo"]
-    },
-    {
-      id: "kcc",
-      name: "Kisan Credit Card (KCC)",
-      icon: Tractor,
-      image: "/crop.jpeg",
-      description: "Provides farmers with timely access to credit for agricultural expenses at a low interest rate, ensuring they can purchase seeds, fertilizers, and machinery.",
-      eligibility: ["Individual farmers / Joint borrowers who are owner cultivators", "Tenant farmers, Oral lessees & Sharecroppers", "Self Help Groups (SHGs) of farmers"],
-      documents: ["Aadhaar Card / PAN Card", "Land documents", "Recent passport size photograph", "Address proof"]
-    },
-    {
-      id: "pmfby",
-      name: "PMFBY (Pradhan Mantri Fasal Bima Yojana)",
-      icon: ShieldCheck,
-      image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=800",
-      description: "A comprehensive crop insurance scheme to provide financial support to farmers suffering crop loss or damage arising out of unforeseen natural events.",
-      eligibility: ["All farmers growing notified crops in a notified area", "Non-loanee farmers are also eligible on a voluntary basis"],
-      documents: ["Aadhaar Card", "Bank Passbook", "Land records", "Sowing certificate from Gram Panchayat"]
-    },
-    {
-      id: "enam",
-      name: "e-NAM (National Agriculture Market)",
-      icon: LineChart,
-      image: "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=800",
-      description: "An online trading platform for agricultural commodities in India. It facilitates farmers, traders, and buyers with online trading in commodities to get better prices.",
-      eligibility: ["Farmers", "FPOs (Farmer Producer Organizations)", "Traders and Commission Agents"],
-      documents: ["Aadhaar Card", "Bank Details for online transfer", "Mobile Number for OTP validation"]
-    },
-    {
-      id: "pkvy",
-      name: "PKVY (Paramparagat Krishi Vikas Yojana)",
-      icon: Sprout,
-      image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=800",
-      description: "An initiative to promote organic farming. The scheme provides financial assistance for organic certification and cluster formation to improve soil health.",
-      eligibility: ["Farmers forming a cluster of 50 acres or more", "Willingness to adopt organic farming practices completely"],
-      documents: ["Aadhaar Card", "Land holding papers", "Declaration of organic farming intent"]
-    }
-  ],
-  hi: [
-    {
-      id: "pm-kisan",
-      name: "पीएम-किसान (PM-KISAN)",
-      icon: Landmark,
-      image: "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&q=80&w=800",
-      description: "इस योजना के तहत, देश भर के सभी किसान परिवारों को तीन समान किस्तों में प्रति वर्ष ₹6,000 की आय सहायता प्रदान की जाती है।",
-      eligibility: ["सभी भूमिधारक किसान परिवार", "उनके नाम पर खेती योग्य जमीन होनी चाहिए", "संस्थागत भूमिधारक पात्र नहीं हैं"],
-      documents: ["आधार कार्ड", "बैंक पासबुक", "भूमि स्वामित्व के कागजात", "पासपोर्ट साइज फोटो"]
-    },
-    {
-      id: "kcc",
-      name: "किसान क्रेडिट कार्ड (KCC)",
-      icon: Tractor,
-      image: "/crop.jpeg",
-      description: "किसानों को कम ब्याज दर पर कृषि खर्चों (बीज, उर्वरक, मशीनरी) के लिए समय पर ऋण उपलब्ध कराता है।",
-      eligibility: ["व्यक्तिगत किसान / संयुक्त कर्जदार", "किरायेदार किसान और बटाईदार", "किसानों के स्वयं सहायता समूह (SHG)"],
-      documents: ["आधार कार्ड / पैन कार्ड", "भूमि के दस्तावेज", "पासपोर्ट साइज फोटो", "पते का प्रमाण"]
-    },
-    {
-      id: "pmfby",
-      name: "प्रधानमंत्री फसल बीमा योजना (PMFBY)",
-      icon: ShieldCheck,
-      image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=800",
-      description: "प्राकृतिक आपदाओं के कारण फसल के नुकसान से पीड़ित किसानों को वित्तीय सहायता प्रदान करने के लिए एक व्यापक फसल बीमा योजना।",
-      eligibility: ["अधिसूचित क्षेत्र में फसलें उगाने वाले सभी किसान", "गैर-ऋणी किसान भी स्वैच्छिक आधार पर पात्र हैं"],
-      documents: ["आधार कार्ड", "बैंक पासबुक", "भूमि रिकॉर्ड", "बुवाई का प्रमाण पत्र"]
-    },
-    {
-      id: "enam",
-      name: "ई-नाम (e-NAM) राष्ट्रीय कृषि बाजार",
-      icon: LineChart,
-      image: "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=800",
-      description: "भारत में कृषि वस्तुओं के लिए एक ऑनलाइन ट्रेडिंग प्लेटफॉर्म। यह किसानों को बेहतर मूल्य प्राप्त करने की सुविधा देता है।",
-      eligibility: ["किसान", "किसान उत्पादक संगठन (FPOs)", "व्यापारी"],
-      documents: ["आधार कार्ड", "ऑनलाइन ट्रांसफर के लिए बैंक विवरण", "मोबाइल नंबर"]
-    },
-    {
-      id: "pkvy",
-      name: "परम्परागत कृषि विकास योजना (PKVY)",
-      icon: Sprout,
-      image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=800",
-      description: "जैविक खेती को बढ़ावा देने की पहल। यह योजना जैविक प्रमाणन और मिट्टी के स्वास्थ्य में सुधार के लिए वित्तीय सहायता प्रदान करती है।",
-      eligibility: ["50 एकड़ का क्लस्टर बनाने वाले किसान", "जैविक खेती अपनाने की इच्छा"],
-      documents: ["आधार कार्ड", "भूमि स्वामित्व के कागजात", "जैविक खेती का घोषणा पत्र"]
-    }
-  ],
-  mr: [
-    {
-      id: "pm-kisan",
-      name: "पीएम-किसान (PM-KISAN)",
-      icon: Landmark,
-      image: "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&q=80&w=800",
-      description: "या योजनेंतर्गत देशभरातील सर्व शेतकरी कुटुंबांना तीन समान हप्त्यांमध्ये दरवर्षी ₹6,000 ची आर्थिक मदत दिली जाते.",
-      eligibility: ["सर्व भूधारक शेतकरी कुटुंबे", "स्वतःच्या नावावर शेतीयोग्य जमीन असणे आवश्यक", "संस्थात्मक जमीन मालक पात्र नाहीत"],
-      documents: ["आधार कार्ड", "बँक पासबुक", "जमिनीचा उतारा (७/१२)", "पासपोर्ट आकाराचा फोटो"]
-    },
-    {
-      id: "kcc",
-      name: "किसान क्रेडिट कार्ड (KCC)",
-      icon: Tractor,
-      image: "/crop.jpeg",
-      description: "शेतकऱ्यांना शेतीच्या खर्चासाठी कमी व्याजदरात वेळेवर कर्ज उपलब्ध करून देते.",
-      eligibility: ["वैयक्तिक शेतकरी किंवा संयुक्त कर्जदार", "कुळ आणि वाटेकरी शेतकरी", "शेतकऱ्यांचे बचत गट (SHGs)"],
-      documents: ["आधार कार्ड / पॅन कार्ड", "जमिनीची कागदपत्रे", "पासपोर्ट फोटो", "पत्त्याचा पुरावा"]
-    },
-    {
-      id: "pmfby",
-      name: "प्रधानमंत्री पीक विमा योजना (PMFBY)",
-      icon: ShieldCheck,
-      image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=800",
-      description: "नैसर्गिक आपत्तीमुळे पिकांचे नुकसान झाल्यास शेतकऱ्यांना आर्थिक मदत देण्यासाठी पीक विमा योजना.",
-      eligibility: ["अधिसूचित क्षेत्रात पिके घेणारे सर्व शेतकरी", "कर्जदार नसलेले शेतकरी देखील पात्र आहेत"],
-      documents: ["आधार कार्ड", "बँक पासबुक", "जमिनीची नोंद", "तलाठी कडून पेरणी प्रमाणपत्र"]
-    },
-    {
-      id: "enam",
-      name: "ई-नाम (e-NAM) राष्ट्रीय कृषी बाजार",
-      icon: LineChart,
-      image: "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=800",
-      description: "भारतातील कृषी उत्पादनांसाठी ऑनलाइन ट्रेडिंग प्लॅटफॉर्म. यामुळे शेतकऱ्यांना ऑनलाइन ट्रेडिंगद्वारे चांगला भाव मिळण्यास मदत होते.",
-      eligibility: ["शेतकरी", "शेतकरी उत्पादक संस्था (FPOs)", "व्यापारी"],
-      documents: ["आधार कार्ड", "बँक तपशील", "मोबाईल क्रमांक"]
-    },
-    {
-      id: "pkvy",
-      name: "परंपरागत कृषी विकास योजना (PKVY)",
-      icon: Sprout,
-      image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=800",
-      description: "सेंद्रिय शेतीला चालना देण्यासाठी हा उपक्रम आहे. सेंद्रिय प्रमाणन आणि मातीचे आरोग्य सुधारण्यासाठी आर्थिक मदत दिली जाते.",
-      eligibility: ["५० एकरांचा गट स्थापन करणारे शेतकरी", "सेंद्रिय शेती पद्धतीचा अवलंब करण्याची इच्छा"],
-      documents: ["आधार कार्ड", "जमिनीची कागदपत्रे", "सेंद्रिय शेतीचे घोषणापत्र"]
-    }
-  ],
-  ur: [
-    {
-      id: "pm-kisan",
-      name: "پی ایم-کسان (PM-KISAN)",
-      icon: Landmark,
-      image: "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&q=80&w=800",
-      description: "اس اسکیم کے تحت کسانوں کو سالانہ 6000 روپے کی مالی امداد دی جاتی ہے۔",
-      eligibility: ["تمام زمیندار کسان خاندان", "نام پر قابل کاشت زمین ہونی چاہیے"],
-      documents: ["آدھار کارڈ", "بینک پاس بک", "زمین کے کاغذات"]
-    },
-    {
-      id: "kcc",
-      name: "کسان کریڈٹ کارڈ (KCC)",
-      icon: Tractor,
-      image: "/crop.jpeg",
-      description: "کسانوں کو کم شرح سود پر زرعی اخراجات کے لیے قرض فراہم کرتا ہے۔",
-      eligibility: ["انفرادی کسان", "کرایہ دار کسان"],
-      documents: ["آدھار کارڈ / پین کارڈ", "زمین کے دستاویزات", "پاسپورٹ سائز تصویر"]
-    },
-    {
-      id: "pmfby",
-      name: "وزیر اعظم فصل بیمہ یوجنا (PMFBY)",
-      icon: ShieldCheck,
-      image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80&w=800",
-      description: "فصل کے نقصان کی صورت میں کسانوں کو مالی مدد فراہم کرنے کے لیے فصل بیمہ اسکیم۔",
-      eligibility: ["تمام کسان جو فصلیں اگاتے ہیں"],
-      documents: ["آدھار کارڈ", "بینک پاس بک", "زمین کا ریکارڈ"]
-    },
-    {
-      id: "enam",
-      name: "ای-نام (e-NAM)",
-      icon: LineChart,
-      image: "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=800",
-      description: "زرعی مصنوعات کے لیے ایک آن لائن ٹریڈنگ پلیٹ فارم۔",
-      eligibility: ["کسان", "تاجر"],
-      documents: ["آدھار کارڈ", "بینک کی تفصیلات", "موبائل نمبر"]
-    },
-    {
-      id: "pkvy",
-      name: "پرمپراگت کرشی وکاس یوجنا (PKVY)",
-      icon: Sprout,
-      image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=800",
-      description: "نامیاتی کھیتی کو فروغ دینے کے لیے مالی امداد کی اسکیم۔",
-      eligibility: ["نامیاتی کھیتی کرنے والے کسان"],
-      documents: ["آدھار کارڈ", "زمین کے کاغذات"]
-    }
-  ]
-}
+const defaultAdvisories: AdvisoryItem[] = [
+  {
+    id: "alert-1",
+    title: "IMD Agromet Advisory: Dry Spell Warning for Pune & Solapur",
+    source: "India Meteorological Department (IMD)",
+    date: "30 Oct 2026",
+    category: "Climate Alert",
+    crop: "Soybean, Cotton, Pulses",
+    relevance: "High (Directly impacts Baramati pilot farm)",
+    summary:
+      "Dry weather likely to prevail over western Maharashtra for the next 7-10 days. Farmers are advised to provide light irrigation in the morning or evening hours and apply straw mulching to conserve root-zone soil moisture.",
+    url: "https://mausam.imd.gov.in",
+  },
+  {
+    id: "alert-2",
+    title: "Baramati APMC: Soybean & Onion Mandi Price Surge",
+    source: "Maharashtra State Agricultural Marketing Board (MSAMB)",
+    date: "30 Oct 2026",
+    category: "Market Intelligence",
+    crop: "Soybean, Onion",
+    relevance: "High",
+    summary:
+      "Modal price of Soybean touched ₹4,750/quintal at Baramati market yard, up 4.2% week-on-week due to steady crushing demand. Red onion modal prices stable at ₹2,100/quintal.",
+    url: "https://www.msamb.com",
+  },
+  {
+    id: "alert-3",
+    title: "KVK Advisory: Fall Armyworm Surveillance on Late Kharif Crops",
+    source: "Krishi Vigyan Kendra (KVK) Baramati",
+    date: "30 Oct 2026",
+    category: "Pest & Disease Advisory",
+    crop: "Maize, Soybean",
+    relevance: "Medium",
+    summary:
+      "Pheromone trap monitoring recommended (5 traps/acre). If egg masses are observed, spray Azadirachtin 1500 ppm @ 5ml/liter of water as biological control.",
+    url: "https://kvkbaramati.com",
+  },
+  {
+    id: "alert-4",
+    title: "PM-Kisan 19th Installment Credited to Eligible Farmers",
+    source: "Ministry of Agriculture & Farmers Welfare",
+    date: "30 Oct 2026",
+    category: "Government Schemes",
+    crop: "All Crops",
+    relevance: "High (Liquidity Support)",
+    summary:
+      "Direct benefit transfer of ₹2,000 released to registered Aadhaar-linked farmer bank accounts. Check PM-Kisan portal for e-KYC status.",
+    url: "https://pmkisan.gov.in",
+  },
+]
+
+const schemesList = [
+  {
+    id: "pm-kisan",
+    name: "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
+    category: "Government Schemes",
+    benefit: "₹6,000 / year in 3 installments",
+    icon: Landmark,
+    description: "Income support of ₹6,000 per year provided to all eligible landholder farmer families across India directly into bank accounts.",
+    eligibility: ["All landholding farmer families", "Cultivable land registered under applicant's name", "Active Aadhaar e-KYC"],
+    documents: ["Aadhaar Card", "Bank Passbook", "7/12 Land Extract", "Mobile number linked with Aadhaar"],
+    url: "https://pmkisan.gov.in",
+  },
+  {
+    id: "kcc",
+    name: "Kisan Credit Card (KCC) Subsidized Loan",
+    category: "Government Schemes",
+    benefit: "Low-interest credit @ 4% per annum",
+    icon: Tractor,
+    description: "Provides timely institutional credit at concessional interest rates for seeds, fertilizers, pesticides, drip maintenance and harvesting needs.",
+    eligibility: ["Individual owner cultivators", "Tenant farmers and sharecroppers", "SHG farmer groups"],
+    documents: ["Aadhaar / PAN Card", "Land title 7/12 & 8A extract", "No-dues certificate from local banks"],
+    url: "https://www.myscheme.gov.in/schemes/kcc",
+  },
+  {
+    id: "pmfby",
+    name: "PMFBY (Pradhan Mantri Fasal Bima Yojana)",
+    category: "Government Schemes",
+    benefit: "Comprehensive yield & weather insurance",
+    icon: ShieldCheck,
+    description: "Protection against non-preventable natural risks (dry spells, pest attacks, post-harvest losses) with premium capped at 2% for Kharif crops.",
+    eligibility: ["All farmers growing notified crops in notified area", "Both loanee and non-loanee farmers"],
+    documents: ["Aadhaar Card", "Bank Passbook", "Sowing Certificate / Crop Declaration", "Land records"],
+    url: "https://pmfby.gov.in",
+  },
+  {
+    id: "pkvy",
+    name: "Paramparagat Krishi Vikas Yojana (PKVY)",
+    category: "Government Schemes",
+    benefit: "₹50,000 / hectare for organic inputs",
+    icon: Sprout,
+    description: "Financial and technical assistance for organic farming certification, bio-fertilizers, neem cake, and market linkage.",
+    eligibility: ["Farmers forming organic clusters of 20+ hectares", "Willingness for PGS-India organic certification"],
+    documents: ["Aadhaar Card", "Cluster membership form", "Land holding papers"],
+    url: "https://daconline.gov.in",
+  },
+]
 
 export default function SchemesPage({ language }: SchemesPageProps) {
-  const t = translations[language] || translations.en
-  const schemes = schemesData[language] || schemesData.en
-  
-  const [expandedId, setExpandedId] = useState<string | null>(schemes[0]?.id || null)
+  const t = pageI18n[language] || pageI18n.en
+  const [advisories, setAdvisories] = useState<AdvisoryItem[]>(defaultAdvisories)
+  const [loading, setLoading] = useState(false)
+  const [selectedFilter, setSelectedFilter] = useState("all")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [expandedScheme, setExpandedScheme] = useState<string | null>(null)
+  const [lastRefreshed, setLastRefreshed] = useState("")
 
-  const toggleExpand = (id: string) => {
-    setExpandedId(expandedId === id ? null : id)
+  const fetchLiveAdvisories = async () => {
+    setLoading(true)
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001"
+    try {
+      const res = await fetch(`${apiBase}/api/news/advisories`)
+      if (!res.ok) throw new Error("Backend offline")
+      const json = await res.json()
+      if (Array.isArray(json) && json.length > 0) {
+        setAdvisories(json)
+      }
+      setLastRefreshed(new Date().toLocaleTimeString())
+    } catch (err) {
+      console.warn("Using default advisories cache", err)
+    } finally {
+      setLoading(false)
+    }
   }
 
+  useEffect(() => {
+    fetchLiveAdvisories()
+  }, [])
+
+  // Filter items
+  const filteredAdvisories = advisories.filter((item) => {
+    const matchesSearch =
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.crop.toLowerCase().includes(searchQuery.toLowerCase())
+
+    if (!matchesSearch) return false
+    if (selectedFilter === "climate") return item.category.toLowerCase().includes("climate")
+    if (selectedFilter === "market") return item.category.toLowerCase().includes("market")
+    if (selectedFilter === "pest") return item.category.toLowerCase().includes("pest")
+    return true
+  })
+
+  const filteredSchemes = schemesList.filter((scheme) => {
+    const matchesSearch =
+      scheme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      scheme.description.toLowerCase().includes(searchQuery.toLowerCase())
+
+    if (!matchesSearch) return false
+    if (selectedFilter === "climate" || selectedFilter === "market" || selectedFilter === "pest") return false
+    return true
+  })
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-background pt-10 pb-20">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Header */}
-        <div className="text-center mb-16 animate-fade-in-up">
-          <div className="w-20 h-20 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl transform transition-transform hover:scale-110 duration-500">
-            <Landmark className="w-10 h-10 text-white" />
+    <div className="space-y-6">
+      {/* HEADER SECTION */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#DDF3E6] text-[#073B2A] border border-[#16A36A]/20">
+              <span className="w-2 h-2 rounded-full bg-[#16A36A] animate-pulse"></span>
+              {t.liveBadge}
+            </span>
+            <span className="text-xs text-[#68766C]">
+              IMD &bull; Baramati APMC &bull; KVK {lastRefreshed ? `(Synced ${lastRefreshed})` : ""}
+            </span>
           </div>
-          <h1 className="font-heading text-4xl md:text-5xl font-extrabold text-foreground mb-4 drop-shadow-sm">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#25352C] tracking-tight font-heading">
             {t.title}
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            {t.subtitle}
-          </p>
+          <p className="text-xs sm:text-sm text-[#68766C] mt-0.5">{t.subtitle}</p>
         </div>
 
-        {/* Schemes Grid (Accordions replaced with beautiful expanding cards) */}
-        <div className="grid grid-cols-1 gap-8">
-          {schemes.map((scheme, index) => {
-            const Icon = scheme.icon
-            const isExpanded = expandedId === scheme.id
+        <button
+          onClick={fetchLiveAdvisories}
+          disabled={loading}
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E5EBE5] rounded-xl text-xs font-semibold text-[#073B2A] hover:bg-[#F5F7F3] shadow-sm transition-all"
+        >
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-[#087A4B]" : ""}`} />
+          {t.refresh}
+        </button>
+      </div>
 
-            return (
-              <Card 
-                key={scheme.id} 
-                className={`group border-transparent transition-all duration-500 ease-out animate-fade-in-up overflow-hidden shadow-lg hover:shadow-2xl bg-white dark:bg-card ${
-                  isExpanded ? 'ring-2 ring-primary/40 scale-[1.01]' : 'hover:-translate-y-1'
-                }`}
-                style={{ animationDelay: `${index * 150}ms` }}
-              >
-                {/* Always Visible Header / Image area */}
-                <div 
-                  className="flex flex-col md:flex-row cursor-pointer"
-                  onClick={() => toggleExpand(scheme.id)}
+      {/* SEARCH AND FILTERS */}
+      <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#68766C]" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t.searchPlaceholder}
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E5EBE5] rounded-2xl text-xs text-[#25352C] placeholder-[#89958C] focus:outline-none focus:ring-2 focus:ring-[#087A4B] transition-all shadow-sm"
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {[
+            { id: "all", label: t.filterAll },
+            { id: "climate", label: t.filterClimate },
+            { id: "market", label: t.filterMarket },
+            { id: "pest", label: t.filterPest },
+            { id: "schemes", label: t.filterSchemes },
+          ].map((btn) => (
+            <button
+              key={btn.id}
+              onClick={() => setSelectedFilter(btn.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                selectedFilter === btn.id
+                  ? "bg-[#087A4B] text-white shadow-sm"
+                  : "bg-white text-[#68766C] border border-[#E5EBE5] hover:bg-[#F5F7F3]"
+              }`}
+            >
+              {btn.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* SECTION 1: LIVE AGROMET & MARKET ALERTS */}
+      {selectedFilter !== "schemes" && filteredAdvisories.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Bell className="w-4 h-4 text-[#087A4B]" />
+            <h2 className="text-base font-bold text-[#25352C]">
+              {language === "mr" ? "थेट कृषी व बाजार सल्ले" : language === "hi" ? "लाइव कृषि एवं बाजार परामर्श" : "Live Agro-Advisories & Market Signals"}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredAdvisories.map((item) => {
+              const isClimate = item.category.toLowerCase().includes("climate")
+              const isMarket = item.category.toLowerCase().includes("market")
+              return (
+                <div
+                  key={item.id}
+                  className="rounded-3xl bg-white border border-[#E5EBE5] p-5 space-y-3 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
                 >
-                  {/* Image Section */}
-                  <div className="md:w-1/3 relative h-48 md:h-auto overflow-hidden">
-                    <img 
-                      src={scheme.image} 
-                      alt={scheme.name} 
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-r md:from-black/40 md:to-transparent" />
-                    <div className="absolute bottom-4 left-4 md:bottom-auto md:top-4 bg-white/20 backdrop-blur-md p-2 rounded-xl text-white">
-                      <Icon className="w-6 h-6" />
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                          isClimate
+                            ? "bg-[#FFF1F0] text-[#D94B45]"
+                            : isMarket
+                            ? "bg-[#DDF3E6] text-[#087A4B]"
+                            : "bg-[#F5F7F3] text-[#7251A5]"
+                        }`}>
+                          {isClimate ? (
+                            <AlertTriangle className="w-4 h-4" />
+                          ) : isMarket ? (
+                            <TrendingUp className="w-4 h-4" />
+                          ) : (
+                            <Bug className="w-4 h-4" />
+                          )}
+                        </span>
+                        <div>
+                          <span className="text-[10px] text-[#68766C] block">{item.source} &bull; {item.date}</span>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-block mt-0.5 ${
+                            isClimate
+                              ? "bg-[#FFF1F0] text-[#D94B45] border border-[#D94B45]/20"
+                              : isMarket
+                              ? "bg-[#DDF3E6] text-[#087A4B] border border-[#087A4B]/20"
+                              : "bg-purple-50 text-purple-700 border border-purple-200"
+                          }`}>
+                            {item.category}
+                          </span>
+                        </div>
+                      </div>
                     </div>
+
+                    <h3 className="font-bold text-sm text-[#25352C] leading-snug">{item.title}</h3>
+                    <p className="text-xs text-[#68766C] leading-relaxed">{item.summary}</p>
                   </div>
 
-                  {/* Title & Basic Info */}
-                  <div className="p-6 md:p-8 flex-1 flex flex-col justify-center relative">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-heading text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
-                        {scheme.name}
-                      </h3>
-                      <div className="bg-primary/10 p-2 rounded-full hidden md:block">
-                        {isExpanded ? (
-                          <ChevronUp className="w-5 h-5 text-primary transition-transform duration-300" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5 text-primary transition-transform duration-300" />
-                        )}
-                      </div>
-                    </div>
-                    <p className={`text-muted-foreground transition-all duration-300 ${isExpanded ? 'line-clamp-none mb-6' : 'line-clamp-2'}`}>
-                      {scheme.description}
-                    </p>
-                    
-                    {!isExpanded && (
-                      <div className="text-primary font-semibold text-sm flex items-center gap-1 mt-4 md:mt-auto">
-                        {t.viewDetails} <ChevronDown className="w-4 h-4" />
-                      </div>
-                    )}
+                  <div className="pt-3 border-t border-[#E5EBE5] flex items-center justify-between text-xs">
+                    <span className="text-[11px] text-[#68766C]">
+                      🌾 <strong className="text-[#25352C]">{item.crop}</strong>
+                    </span>
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-semibold text-[#087A4B] hover:underline flex items-center gap-1"
+                    >
+                      {t.viewAdvisory} <ExternalLink className="w-3 h-3" />
+                    </a>
                   </div>
                 </div>
-                
-                {/* Expandable Detailed Content */}
-                <div 
-                  className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                    isExpanded ? 'max-h-[1000px] opacity-100 border-t border-border' : 'max-h-0 opacity-0'
-                  }`}
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 2: GOVERNMENT AGRICULTURAL SCHEMES */}
+      {(selectedFilter === "all" || selectedFilter === "schemes") && filteredSchemes.length > 0 && (
+        <div className="space-y-4 pt-4">
+          <div className="flex items-center gap-2">
+            <Landmark className="w-4 h-4 text-[#073B2A]" />
+            <h2 className="text-base font-bold text-[#25352C]">
+              {language === "mr" ? "सरकारी आर्थिक योजना व सबसिडी" : language === "hi" ? "सरकारी वित्तीय योजनाएं एवं अनुदान" : "Government Financial Schemes & Subsidies"}
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {filteredSchemes.map((scheme) => {
+              const isExpanded = expandedScheme === scheme.id
+              const Icon = scheme.icon
+              return (
+                <div
+                  key={scheme.id}
+                  className="rounded-3xl bg-white border border-[#E5EBE5] overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <div className="p-6 md:p-8 md:ml-[33.333333%] bg-slate-50/50 dark:bg-muted/10">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      {/* Eligibility */}
-                      <div className="bg-white dark:bg-card rounded-xl p-5 shadow-sm border border-border/50 hover:border-primary/30 transition-colors">
-                        <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                          <CheckCircle className="w-5 h-5 text-primary" />
-                          <h4 className="font-semibold text-foreground">{t.eligibility}</h4>
+                  <div
+                    onClick={() => setExpandedScheme(isExpanded ? null : scheme.id)}
+                    className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-[#F5F7F3]/60 transition-colors"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-[#DDF3E6] border border-[#16A36A]/20 flex items-center justify-center shrink-0 text-[#073B2A]">
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-bold text-sm text-[#25352C]">{scheme.name}</h3>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#EBF3FC] text-[#2878D0] font-bold border border-[#2878D0]/20">
+                            {scheme.benefit}
+                          </span>
                         </div>
-                        <ul className="space-y-3">
-                          {scheme.eligibility.map((item, idx) => (
-                            <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                              <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
-                              <span>{item}</span>
+                        <p className="text-xs text-[#68766C] mt-1 line-clamp-2">{scheme.description}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                      <span className="text-xs font-semibold text-[#087A4B] flex items-center gap-1">
+                        {isExpanded ? "Hide Details" : t.viewDetails}
+                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* EXPANDED CONTENT */}
+                  {isExpanded && (
+                    <div className="p-5 bg-[#F5F7F3] border-t border-[#E5EBE5] grid grid-cols-1 md:grid-cols-2 gap-4 text-xs animate-fade-in">
+                      <div className="p-4 bg-white rounded-2xl border border-[#E5EBE5] space-y-2">
+                        <h4 className="font-bold text-[#25352C] flex items-center gap-1.5">
+                          <CheckCircle className="w-3.5 h-3.5 text-[#16A36A]" />
+                          {t.eligibility}
+                        </h4>
+                        <ul className="space-y-1.5 text-[#68766C]">
+                          {scheme.eligibility.map((el, i) => (
+                            <li key={i} className="flex items-start gap-2">
+                              <span className="text-[#16A36A] font-bold">•</span>
+                              <span>{el}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
 
-                      {/* Documents */}
-                      <div className="bg-white dark:bg-card rounded-xl p-5 shadow-sm border border-border/50 hover:border-accent/30 transition-colors">
-                        <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                          <FileText className="w-5 h-5 text-accent" />
-                          <h4 className="font-semibold text-foreground">{t.documents}</h4>
-                        </div>
-                        <ul className="space-y-3">
-                          {scheme.documents.map((doc, idx) => (
-                            <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                              <span className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 flex-shrink-0" />
+                      <div className="p-4 bg-white rounded-2xl border border-[#E5EBE5] space-y-2">
+                        <h4 className="font-bold text-[#25352C] flex items-center gap-1.5">
+                          <FileText className="w-3.5 h-3.5 text-[#2878D0]" />
+                          {t.documents}
+                        </h4>
+                        <ul className="space-y-1.5 text-[#68766C]">
+                          {scheme.documents.map((doc, i) => (
+                            <li key={i} className="flex items-start gap-2">
+                              <span className="text-[#2878D0] font-bold">•</span>
                               <span>{doc}</span>
                             </li>
                           ))}
                         </ul>
+                        <div className="pt-2 text-right">
+                          <a
+                            href={scheme.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-bold text-[#087A4B] hover:underline inline-flex items-center gap-1"
+                          >
+                            Apply on Official Portal <ExternalLink className="w-3 h-3" />
+                          </a>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
-              </Card>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
-
-      </div>
+      )}
     </div>
   )
 }

@@ -2,16 +2,17 @@
 
 import { useState } from "react"
 import { useLanguage } from "./language-context"
-import Header from "./layout/header"
-import HomePage from "./pages/home-page"
-import PredictionPage from "./pages/prediction-page"
+import AppSidebarLayout from "./layout/app-sidebar-layout"
+import ExecutiveDashboard from "./dashboard/executive-dashboard"
+import MyFarmView from "./dashboard/my-farm-view"
+import PlotRegistrationModal from "./dashboard/plot-registration-modal"
+import ScenarioSimulator from "./dashboard/scenario-simulator"
+import ActionPlanView from "./dashboard/action-plan-view"
+import OllamaAssistant from "./dashboard/ollama-assistant"
+import SatellitePage from "./pages/satellite-page"
 import WeatherPage from "./pages/weather-page"
-import ProfilePage from "./pages/profile-page"
-import AboutPage from "./pages/about-page"
-import ContactPage from "./pages/contact-page"
 import SchemesPage from "./pages/schemes-page"
 import MarketPage from "./pages/market-page"
-import SatellitePage from "./pages/satellite-page"
 
 interface MainAppProps {
   user: any
@@ -19,38 +20,88 @@ interface MainAppProps {
 }
 
 export default function MainApp({ user, onLogout }: MainAppProps) {
-  const [currentPage, setCurrentPage] = useState("home")
-  const { language } = useLanguage()
+  const [currentPage, setCurrentPage] = useState("dashboard")
+  const [isPlotModalOpen, setIsPlotModalOpen] = useState(false)
+  const { language, setLanguage } = useLanguage()
 
-  const renderPage = () => {
+  const handlePlotAdded = (newPlot: any) => {
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001"
+    fetch(`${apiBase}/api/farms/farm-mh-001/plots`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newPlot),
+    }).catch((err) => console.warn("Failed to sync plot to backend", err))
+  }
+
+  const renderContent = () => {
     switch (currentPage) {
-      case "home":
-        return <HomePage language={language} user={user} />
-      case "prediction":
-        return <PredictionPage language={language} user={user} />
+      case "dashboard":
+        return (
+          <ExecutiveDashboard
+            language={language}
+            onNavigate={setCurrentPage}
+            onOpenPlotModal={() => setIsPlotModalOpen(true)}
+          />
+        )
+      case "my-farm":
+        return (
+          <MyFarmView
+            language={language}
+            onOpenPlotModal={() => setIsPlotModalOpen(true)}
+            onNavigateToSatellite={() => setCurrentPage("satellite")}
+          />
+        )
+      case "satellite":
+        return <SatellitePage language={language} user={user} />
+      case "twin":
+        return (
+          <ScenarioSimulator
+            language={language}
+            onApplyPlan={() => setCurrentPage("recommendations")}
+          />
+        )
+      case "recommendations":
+        return (
+          <ActionPlanView
+            language={language}
+            onBackToSim={() => setCurrentPage("twin")}
+          />
+        )
       case "weather":
         return <WeatherPage language={language} user={user} />
-      case "schemes":
+      case "news":
         return <SchemesPage language={language} />
       case "market":
         return <MarketPage language={language} user={user} />
-      case "satellite":
-        return <SatellitePage language={language} user={user} />
-      case "profile":
-        return <ProfilePage language={language} user={user} onLogout={onLogout} />
-      case "about":
-        return <AboutPage language={language} />
-      case "contact":
-        return <ContactPage language={language} />
+      case "assistant":
+        return <OllamaAssistant />
       default:
-        return <HomePage language={language} user={user} />
+        return (
+          <ExecutiveDashboard
+            language={language}
+            onNavigate={setCurrentPage}
+            onOpenPlotModal={() => setIsPlotModalOpen(true)}
+          />
+        )
     }
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header language={language} currentPage={currentPage} onNavigate={setCurrentPage} user={user} />
-      <main className="pt-20">{renderPage()}</main>
-    </div>
+    <AppSidebarLayout
+      currentPage={currentPage}
+      onNavigate={setCurrentPage}
+      language={language}
+      onLanguageChange={setLanguage}
+      user={user}
+    >
+      {renderContent()}
+
+      {/* PLOT REGISTRATION MODAL */}
+      <PlotRegistrationModal
+        isOpen={isPlotModalOpen}
+        onClose={() => setIsPlotModalOpen(false)}
+        onPlotAdded={handlePlotAdded}
+      />
+    </AppSidebarLayout>
   )
 }

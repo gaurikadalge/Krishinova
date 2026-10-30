@@ -37,7 +37,7 @@ export default function Home() {
   }
 
   if (isLoading) {
-    return <div className="min-h-screen bg-gradient-to-br from-green-50 via-amber-50 to-green-100" />
+    return <div className="min-h-screen bg-background" />
   }
 
   return (

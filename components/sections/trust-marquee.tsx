@@ -30,7 +30,7 @@ const translations: Record<"en" | "hi" | "ur" | "mr", { prefix: string; items: M
       { iconType: "crop", label: "Pomegranate", sub: "Water Conserved" },
       { iconType: "district", label: "Ahmednagar", sub: "District" },
       { iconType: "season", label: "Zaid Cycle", sub: "Irrigation Sync" },
-      { iconType: "district", label: "Aurangabad", sub: "District" },
+      { iconType: "district", label: "Chhatrapati Sambhajinagar", sub: "District" },
       { iconType: "crop", label: "Grapes & Turmeric", sub: "High Yield" },
       { iconType: "district", label: "Solapur", sub: "District" },
     ],
@@ -49,7 +49,7 @@ const translations: Record<"en" | "hi" | "ur" | "mr", { prefix: string; items: M
       { iconType: "crop", label: "अनार", sub: "जल संरक्षण" },
       { iconType: "district", label: "अहमदनगर", sub: "जिला" },
       { iconType: "season", label: "जायद चक्र", sub: "सिंचाई समन्वय" },
-      { iconType: "district", label: "औरंगाबाद", sub: "जिला" },
+      { iconType: "district", label: "संभाजीनगर", sub: "जिला" },
       { iconType: "crop", label: "अंगूर एवं हल्दी", sub: "उच्च पैदावार" },
       { iconType: "district", label: "सोलापुर", sub: "जिला" },
     ],
@@ -59,36 +59,36 @@ const translations: Record<"en" | "hi" | "ur" | "mr", { prefix: string; items: M
     items: [
       { iconType: "crop", label: "گنا", sub: "نقد فصل" },
       { iconType: "district", label: "ناسک", sub: "ضلع" },
-      { iconType: "season", label: "خریف اور ربیع", sub: "موسم" },
-      { iconType: "crop", label: "کپاس", sub: "درست تجاویز" },
+      { iconType: "season", label: "خریف و ربیع", sub: "موسم" },
+      { iconType: "crop", label: "کپاس", sub: "سفارشات" },
       { iconType: "district", label: "پونے", sub: "ضلع" },
       { iconType: "badge", label: "96.8% درستگی", sub: "AI ماڈلز" },
-      { iconType: "crop", label: "سویا بین", sub: "مٹی کے موافق" },
+      { iconType: "crop", label: "سویابین", sub: "مٹی کے موافق" },
       { iconType: "district", label: "کولہاپور", sub: "ضلع" },
       { iconType: "crop", label: "انار", sub: "پانی کی بچت" },
       { iconType: "district", label: "احمد نگر", sub: "ضلع" },
-      { iconType: "season", label: "زائد سیزن", sub: "آبپاشی شیڈول" },
+      { iconType: "season", label: "زاید سائیکل", sub: "آبپاشی" },
       { iconType: "district", label: "اورنگ آباد", sub: "ضلع" },
-      { iconType: "crop", label: "انگور اور ہلدی", sub: "بہترین پیداوار" },
+      { iconType: "crop", label: "انگور اور ہلدی", sub: "زیادہ پیداوار" },
       { iconType: "district", label: "سولاپور", sub: "ضلع" },
     ],
   },
   mr: {
-    prefix: "महाराष्ट्रभरातील शेतकऱ्यांचा विश्वासू भागीदार",
+    prefix: "महाराष्ट्रभरातील शेतकऱ्यांचा विश्वासू सोबती",
     items: [
       { iconType: "crop", label: "ऊस", sub: "नगदी पीक" },
       { iconType: "district", label: "नाशिक", sub: "जिल्हा" },
-      { iconType: "season", label: "खरीप आणि रब्बी", sub: "हंगाम" },
+      { iconType: "season", label: "खरीप व रब्बी", sub: "हंगाम" },
       { iconType: "crop", label: "कापूस", sub: "अचूक शिफारस" },
       { iconType: "district", label: "पुणे", sub: "जिल्हा" },
-      { iconType: "badge", label: "96.8% अचूकता", sub: "AI मॉडेल्स" },
+      { iconType: "badge", label: "९६.८% अचूकता", sub: "AI मॉडेल" },
       { iconType: "crop", label: "सोयाबीन", sub: "माती अनुकूल" },
       { iconType: "district", label: "कोल्हापूर", sub: "जिल्हा" },
-      { iconType: "crop", label: "डाळिंब", sub: "जल संवर्धन" },
-      { iconType: "district", label: "अहमदनगर", sub: "जिल्हा" },
-      { iconType: "season", label: "उन्हाळी हंगाम", sub: "सिंचन नियोजन" },
-      { iconType: "district", label: "छ. संभाजीनगर", sub: "जिल्हा" },
-      { iconType: "crop", label: "द्राक्षे आणि हळद", sub: "भरघोस उत्पादन" },
+      { iconType: "crop", label: "डाळिंब", sub: "पाणी बचत" },
+      { iconType: "district", label: "अहिल्यानगर", sub: "जिल्हा" },
+      { iconType: "season", label: "उन्हाळी हंगाम", sub: "सिंचन मेळ" },
+      { iconType: "district", label: "छत्रपती संभाजीनगर", sub: "जिल्हा" },
+      { iconType: "crop", label: "द्राक्षे व हळद", sub: "भरघोस उत्पादन" },
       { iconType: "district", label: "सोलापूर", sub: "जिल्हा" },
     ],
   },
@@ -101,32 +101,34 @@ export default function TrustMarquee({ language, className = "" }: TrustMarqueeP
 
   const renderIcon = (type: MarqueeItem["iconType"]) => {
     switch (type) {
-      case "crop": return <Sprout className="w-3.5 h-3.5 text-[#c8f53c] shrink-0" />
-      case "district": return <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
-      case "season": return <Calendar className="w-3.5 h-3.5 text-secondary shrink-0" />
-      case "badge": return <Sparkles className="w-3.5 h-3.5 text-[#c8f53c] shrink-0" />
+      case "crop":
+        return <Sprout className="w-3.5 h-3.5 text-[#087A4B] shrink-0" />
+      case "district":
+        return <MapPin className="w-3.5 h-3.5 text-[#2878D0] shrink-0" />
+      case "season":
+        return <Calendar className="w-3.5 h-3.5 text-[#7251A5] shrink-0" />
+      case "badge":
+        return <Sparkles className="w-3.5 h-3.5 text-[#16A36A] shrink-0" />
     }
   }
 
   const renderStrip = (keyPrefix: string) => (
-    <div className="flex shrink-0 animate-marquee items-center gap-4 py-1.5 group-hover:[animation-play-state:paused]">
+    <div className="flex shrink-0 animate-marquee items-center gap-3 py-1.5 group-hover:[animation-play-state:paused]">
       {t.items.map((item, idx) => (
         <div
           key={`${keyPrefix}-${idx}`}
-          className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full
-            bg-white/15 dark:bg-black/30 backdrop-blur-xl
-            border border-white/25 dark:border-white/15
-            hover:border-[#c8f53c]/40 hover:bg-white/25
-            shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3),0_4px_12px_-2px_rgba(0,0,0,0.2)]
-            transition-all duration-300 shrink-0 cursor-default"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full
+            bg-white border border-[#E5EBE5]
+            hover:border-[#087A4B]/40 hover:bg-[#F0F5F0]
+            shadow-sm transition-all duration-300 shrink-0 cursor-default"
         >
-          <div className="w-6 h-6 rounded-full bg-white/15 flex items-center justify-center">
+          <div className="w-5 h-5 rounded-full bg-[#DDF3E6] flex items-center justify-center">
             {renderIcon(item.iconType)}
           </div>
           <div className="flex items-baseline gap-1.5 whitespace-nowrap">
-            <span className="text-xs font-bold text-white tracking-tight">{item.label}</span>
+            <span className="text-xs font-bold text-[#25352C] tracking-tight">{item.label}</span>
             {item.sub && (
-              <span className="text-[10px] uppercase font-medium text-white/70">• {item.sub}</span>
+              <span className="text-[10px] uppercase font-semibold text-[#68766C]">• {item.sub}</span>
             )}
           </div>
         </div>
@@ -139,15 +141,15 @@ export default function TrustMarquee({ language, className = "" }: TrustMarqueeP
       ref={ref}
       dir={isRtl ? "rtl" : "ltr"}
       aria-label="Trust Marquee"
-      className={`relative w-full py-5
-        bg-transparent
-        border-y border-white/15
+      className={`relative w-full py-6
+        bg-[#F5F7F3]
+        border-b border-[#E5EBE5]
         overflow-hidden transition-all duration-700
         ${isRevealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"} ${className}`}
     >
       <div className="max-w-7xl mx-auto px-4 mb-3 flex items-center justify-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-[#c8f53c] animate-pulse shrink-0" />
-        <p className="text-xs font-semibold tracking-wider uppercase text-white/90 text-center drop-shadow-sm">
+        <span className="w-2 h-2 rounded-full bg-[#16A36A] animate-pulse shrink-0" />
+        <p className="text-xs font-bold tracking-wider uppercase text-[#073B2A] text-center">
           {t.prefix}
         </p>
       </div>

@@ -45,10 +45,10 @@ const translations = {
 export default function PredictionPage({ language, user }: PredictionPageProps) {
   const t = translations[language] || translations.en
   const [cropInputs, setCropInputs] = useState({
-    nitrogen: user.nitrogen || "",
-    phosphorus: user.phosphorus || "",
-    potassium: user.potassium || "",
-    ph: user.ph || "",
+    nitrogen: user?.nitrogen || "",
+    phosphorus: user?.phosphorus || "",
+    potassium: user?.potassium || "",
+    ph: user?.ph || "",
   })
   const [cropPrediction, setCropPrediction] = useState<any>(null)
   const [waterPrediction, setWaterPrediction] = useState<any>(null)

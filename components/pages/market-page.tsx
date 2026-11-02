@@ -109,7 +109,7 @@ const mockEquipment = [
     distance: "5.1 km",
     rate: 1200,
     rateType: "hour",
-    image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&q=80&w=600",
+    image: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&q=80&w=600",
     verified: true,
     phone: "+91 91234 56789",
     bookedDates: ["2026-08-25", "2026-08-26"]
@@ -135,7 +135,7 @@ const mockEquipment = [
     distance: "3.8 km",
     rate: 400,
     rateType: "day",
-    image: "https://images.unsplash.com/photo-1542382156909-9ae37b3f56fd?auto=format&fit=crop&q=80&w=600",
+    image: "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?auto=format&fit=crop&q=80&w=600",
     verified: true,
     phone: "+91 98765 11223",
     bookedDates: []

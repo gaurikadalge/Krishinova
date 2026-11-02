@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useLanguage, type Language } from "../language-context"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -19,6 +19,13 @@ import {
   History,
   Calendar,
   Clock,
+  Droplets,
+  Coins,
+  Layers,
+  CheckCircle2,
+  AlertTriangle,
+  PlusCircle,
+  RefreshCw,
 } from "lucide-react"
 import InteractiveMap from "../interactive-map"
 
@@ -30,40 +37,41 @@ interface ProfilePageProps {
 
 const translations = {
   en: {
-    profile: "My Profile",
-    personalInfo: "Personal Information",
-    landInfo: "Land Information",
+    profile: "Farm & Plots Management",
+    personalInfo: "Farmer Identity",
+    landInfo: "Plot Ledger & Soil",
+    waterAndBudget: "Water & Budget Assets",
     settings: "Settings",
-    predictionHistory: "Prediction History",
+    predictionHistory: "Activity History",
     name: "Full Name",
     dob: "Date of Birth",
     mobile: "Mobile Number",
     location: "Location",
-    landArea: "Land Area (acres)",
-    nitrogen: "Nitrogen (mg/kg)",
-    phosphorus: "Phosphorus (mg/kg)",
-    potassium: "Potassium (mg/kg)",
+    landArea: "Total Farm Area (acres)",
+    nitrogen: "Available Nitrogen (N kg/ha)",
+    phosphorus: "Phosphorus (P kg/ha)",
+    potassium: "Potassium (K kg/ha)",
     ph: "pH Level",
-    totalPredictions: "Total Predictions",
+    totalPredictions: "Logged Activities",
     language: "Language Preference",
     english: "English",
     hindi: "हिन्दी (Hindi)",
     urdu: "اردو (Urdu)",
     marathi: "मराठी (Marathi)",
     logout: "Logout",
-    edit: "Edit Profile",
-    save: "Save Changes",
+    edit: "Edit Details",
+    save: "Save to Digital Twin",
     cancel: "Cancel",
     notifications: "Notifications",
     privacy: "Privacy & Security",
     appearance: "Appearance",
-    enableNotifications: "Enable Email Notifications",
+    enableNotifications: "Enable Advisory Notifications",
     twoFactor: "Two-Factor Authentication",
-    dataPrivacy: "Data Privacy",
+    dataPrivacy: "Data Privacy & Governance",
     accountSecurity: "Account Security",
     darkMode: "Dark Mode",
     theme: "Theme",
-    profileUpdated: "Profile updated successfully",
+    profileUpdated: "Farm Profile updated successfully in Digital Twin",
     settingsUpdated: "Settings updated successfully",
     selectLanguage: "Select your preferred language for the application",
     signOut: "Sign Out",
@@ -71,102 +79,114 @@ const translations = {
     selectLocation: "Select Location",
     latitude: "Latitude",
     longitude: "Longitude",
-    city: "City",
+    city: "District / Taluka",
     changePhoto: "Change Photo",
-    noPredictions: "No predictions yet. Start by making your first prediction!",
+    noPredictions: "No prior field activities recorded yet.",
     crop: "Crop",
     date: "Date",
     time: "Time",
     details: "Details",
     viewDetails: "View Details",
+    twinSynchronized: "Synchronized with Twin State",
+    pilotBadge: "Maharashtra Pilot Context (Baramati, Pune)",
+    totalWater: "Total Available Water",
+    totalBudget: "Total Seasonal Budget",
+    remainingBudget: "Remaining Liquidity",
   },
   hi: {
-    profile: "मेरी प्रोफाइल",
-    personalInfo: "व्यक्तिगत जानकारी",
-    landInfo: "भूमि की जानकारी",
+    profile: "खेत और प्लॉट प्रबंधन",
+    personalInfo: "किसान पहचान",
+    landInfo: "प्लॉट बहीखाता और मिट्टी",
+    waterAndBudget: "जल और बजट संसाधन",
     settings: "सेटिंग्स",
-    predictionHistory: "भविष्यवाणी इतिहास",
+    predictionHistory: "गतिविधि इतिहास",
     name: "पूरा नाम",
     dob: "जन्म तिथि",
     mobile: "मोबाइल नंबर",
     location: "स्थान",
-    landArea: "भूमि क्षेत्र (एकड़)",
-    nitrogen: "नाइट्रोजन (mg/kg)",
-    phosphorus: "फॉस्फोरस (mg/kg)",
-    potassium: "पोटेशियम (mg/kg)",
+    landArea: "कुल खेत क्षेत्र (एकड़)",
+    nitrogen: "नाइट्रोजन (N kg/ha)",
+    phosphorus: "फॉस्फोरस (P kg/ha)",
+    potassium: "पोटेशियम (K kg/ha)",
     ph: "pH स्तर",
-    totalPredictions: "कुल भविष्यवाणियां",
+    totalPredictions: "दर्ज गतिविधियाँ",
     language: "भाषा की पसंद",
     english: "English",
     hindi: "हिन्दी (Hindi)",
     urdu: "اردو (Urdu)",
     marathi: "मराठी (Marathi)",
     logout: "लॉग आउट",
-    edit: "प्रोफाइल संपादित करें",
-    save: "परिवर्तन सहेजें",
+    edit: "संपादित करें",
+    save: "डिजिटल ट्विन में सहेजें",
     cancel: "रद्द करें",
     notifications: "सूचनाएं",
     privacy: "गोपनीयता और सुरक्षा",
     appearance: "दिखावट",
-    enableNotifications: "ईमेल सूचनाएं सक्षम करें",
-    twoFactor: "दो-कारक प्रमाणीकरण",
+    enableNotifications: "सलाहकार सूचनाएं सक्षम करें",
+    twoFactor: "दो-चरणीय प्रमाणीकरण",
     dataPrivacy: "डेटा गोपनीयता",
     accountSecurity: "खाता सुरक्षा",
     darkMode: "डार्क मोड",
     theme: "थीम",
-    profileUpdated: "प्रोफाइल सफलतापूर्वक अपडेट हो गया",
-    settingsUpdated: "सेटिंग्स सफलतापूर्वक अपडेट हो गईं",
-    selectLanguage: "एप्लिकेशन के लिए अपनी पसंदीदा भाषा चुनें",
+    profileUpdated: "खेत प्रोफ़ाइल डिजिटल ट्विन में सफलतापूर्वक सहेजी गई",
+    settingsUpdated: "सेटिंग्स सफलतापूर्वक अपडेट की गईं",
+    selectLanguage: "अनुप्रयोग के लिए अपनी पसंदीदा भाषा चुनें",
     signOut: "साइन आउट",
-    endSession: "अपने वर्तमान सत्र को समाप्त करें",
+    endSession: "सत्र समाप्त करें",
     selectLocation: "स्थान चुनें",
     latitude: "अक्षांश",
-    longitude: "देशांतर",
-    city: "शहर",
+    longitude: "रेखांश",
+    city: "ज़िला / तालुका",
     changePhoto: "फोटो बदलें",
-    noPredictions: "अभी तक कोई भविष्यवाणी नहीं। अपनी पहली भविष्यवाणी करके शुरुआत करें!",
+    noPredictions: "अभी तक कोई गतिविधि दर्ज नहीं है।",
     crop: "फसल",
     date: "तारीख",
     time: "समय",
     details: "विवरण",
     viewDetails: "विवरण देखें",
+    twinSynchronized: "ट्विन स्थिति के साथ समन्वयित",
+    pilotBadge: "महाराष्ट्र पायलट संदर्भ (बारामती, पुणे)",
+    totalWater: "कुल उपलब्ध जल",
+    totalBudget: "कुल मौसमी बजट",
+    remainingBudget: "शेष नकदी",
   },
   ur: {
-    profile: "میری پروفائل",
-    personalInfo: "ذاتی معلومات",
-    landInfo: "زمین کی معلومات",
-    settings: "ترتیبات",
-    predictionHistory: "پیش گوئی کی تاریخ",
-    name: "مکمل نام",
-    dob: "پیدائش کی تاریخ",
+    profile: "فارم اور پلاٹ کا انتظام",
+    personalInfo: "کسان کی شناخت",
+    landInfo: "پلاٹ لیجر اور مٹی",
+    waterAndBudget: "پانی اور بجٹ کے وسائل",
+    settings: "سیٹنگز",
+    predictionHistory: "سرگرمی کی تاریخ",
+    name: "پورا نام",
+    dob: "تاریخ پیدائش",
     mobile: "موبائل نمبر",
     location: "مقام",
-    landArea: "زمین کا رقبہ (ایکڑ)",
-    nitrogen: "نائٹروجن (mg/kg)",
-    phosphorus: "فاسفورس (mg/kg)",
-    potassium: "پوٹاشیم (mg/kg)",
+    landArea: "کل فارم رقبہ (ایکڑ)",
+    nitrogen: "نائٹروجن (N kg/ha)",
+    phosphorus: "فاسفورس (P kg/ha)",
+    potassium: "پوٹاشیم (K kg/ha)",
     ph: "pH سطح",
-    totalPredictions: "کل پیشن گوئیاں",
+    totalPredictions: "درج شدہ سرگرمیاں",
     language: "زبان کی ترجیح",
     english: "English",
     hindi: "हिन्दी (Hindi)",
     urdu: "اردو (Urdu)",
     marathi: "मराठी (Marathi)",
     logout: "لاگ آؤٹ",
-    edit: "پروفائل میں ترمیم کریں",
-    save: "تبدیلیاں محفوظ کریں",
+    edit: "ترمیم کریں",
+    save: "محفوظ کریں",
     cancel: "منسوخ کریں",
     notifications: "اطلاعات",
     privacy: "رازداری اور سیکیورٹی",
-    appearance: "ظہور",
+    appearance: "ظاہری شکل",
     enableNotifications: "ای میل اطلاعات فعال کریں",
-    twoFactor: "دو عاملی تصدیق",
-    dataPrivacy: "ڈیٹا کی رازداری",
-    accountSecurity: "اکاؤنٹ کی سیکیورٹی",
+    twoFactor: "دو عنصر کی تصدیق",
+    dataPrivacy: "ڈیٹا پرائیویسی",
+    accountSecurity: "اکاؤنٹ سیکیورٹی",
     darkMode: "ڈارک موڈ",
     theme: "تھیم",
-    profileUpdated: "پروفائل کامیابی سے اپ ڈیٹ ہو گیا",
-    settingsUpdated: "ترتیبات کامیابی سے اپ ڈیٹ ہو گئیں",
+    profileUpdated: "پروفائل کو کامیابی سے اپ ڈیٹ کیا گیا",
+    settingsUpdated: "سیٹنگز کو کامیابی سے اپ ڈیٹ کیا گیا",
     selectLanguage: "درخواست کے لیے اپنی پسندیدہ زبان منتخب کریں",
     signOut: "سائن آؤٹ",
     endSession: "اپنے موجودہ سیشن کو ختم کریں",
@@ -175,456 +195,474 @@ const translations = {
     longitude: "طول البلد",
     city: "شہر",
     changePhoto: "فوٹو بدلیں",
-    noPredictions: "ابھی تک کوئی پیش گوئی نہیں۔ اپنی پہلی پیش گوئی سے شروع کریں!",
+    noPredictions: "ابھی تک کوئی سرگرمی نہیں۔",
     crop: "فصل",
     date: "تاریخ",
     time: "وقت",
     details: "تفصیلات",
     viewDetails: "تفصیلات دیکھیں",
+    twinSynchronized: "ڈیجیٹل ٹوئن سے مطابقت پذیر",
+    pilotBadge: "مہاراشٹر پائلٹ سیاق و سباق (بارامتی، پونے)",
+    totalWater: "کل دستیاب پانی",
+    totalBudget: "کل بجٹ",
+    remainingBudget: "باقی ماندہ رقم",
   },
   mr: {
-    profile: "माझी प्रोफाइल",
-    personalInfo: "व्यक्तिगत माहिती",
-    landInfo: "जमीन माहिती",
-    settings: "सेटिंग्स",
-    predictionHistory: "भविष्यवाणी इतिहास",
+    profile: "शेत आणि प्लॉट व्यवस्थापन",
+    personalInfo: "शेतकरी ओळख",
+    landInfo: "प्लॉट नोंदवही आणि माती",
+    waterAndBudget: "पाणी आणि अंदाजपत्रक साधने",
+    settings: "सेटिंग्ज",
+    predictionHistory: "कृती इतिहास",
     name: "पूर्ण नाव",
     dob: "जन्म तारीख",
     mobile: "मोबाइल नंबर",
     location: "स्थान",
-    landArea: "जमीन क्षेत्र (एकर)",
-    nitrogen: "नायट्रोजन (mg/kg)",
-    phosphorus: "फॉस्फरस (mg/kg)",
-    potassium: "पोटॅशियम (mg/kg)",
+    landArea: "एकूण शेत क्षेत्र (एकर)",
+    nitrogen: "उपलब्ध नायट्रोजन (N kg/ha)",
+    phosphorus: "फॉस्फरस (P kg/ha)",
+    potassium: "पोटॅशियम (K kg/ha)",
     ph: "pH स्तर",
-    totalPredictions: "एकूण भविष्यवाणी",
+    totalPredictions: "नोंदवलेली कृत्ये",
     language: "भाषा प्राधान्य",
     english: "English",
     hindi: "हिन्दी (Hindi)",
     urdu: "اردو (Urdu)",
     marathi: "मराठी (Marathi)",
     logout: "लॉग आउट",
-    edit: "प्रोफाइल संपादित करा",
-    save: "बदल जतन करा",
+    edit: "संपादित करा",
+    save: "डिजिटल ट्विनमध्ये जतन करा",
     cancel: "रद्द करा",
     notifications: "सूचना",
     privacy: "गोपनीयता आणि सुरक्षा",
     appearance: "दिसावट",
-    enableNotifications: "ईमेल सूचना सक्षम करा",
+    enableNotifications: "सल्लागार सूचना सक्षम करा",
     twoFactor: "दोन-घटक प्रमाणीकरण",
     dataPrivacy: "डेटा गोपनीयता",
     accountSecurity: "खाते सुरक्षा",
     darkMode: "गडद मोड",
     theme: "थीम",
-    profileUpdated: "प्रोफाइल यशस्वीरित्या अपडेट झाली",
-    settingsUpdated: "सेटिंग्स यशस्वीरित्या अपडेट झाली",
+    profileUpdated: "शेत प्रोफाइल डिजिटल ट्विनमध्ये यशस्वीरित्या अद्यतनित झाली",
+    settingsUpdated: "सेटिंग्ज यशस्वीरित्या अपडेट झाली",
     selectLanguage: "अनुप्रयोगासाठी आपली पसंतीची भाषा निवडा",
     signOut: "साइन आउट",
     endSession: "आपला वर्तमान सत्र समाप्त करा",
     selectLocation: "स्थान निवडा",
     latitude: "अक्षांश",
     longitude: "रेखांश",
-    city: "शहर",
+    city: "जिल्हा / तालुका",
     changePhoto: "फोटो बदला",
-    noPredictions: "अद्याप कोणतीही भविष्यवाणी नाही। आपली पहिली भविष्यवाणी करून सुरुवात करा!",
+    noPredictions: "अद्याप कोणतीही नोंदवलेली कृती नाही.",
     crop: "पीक",
     date: "तारीख",
     time: "वेळ",
     details: "तपशील",
     viewDetails: "तपशील पहा",
+    twinSynchronized: "डिजिटल ट्विनशी समन्वयित",
+    pilotBadge: "महाराष्ट्र पायलट संदर्भ (बारामती, पुणे)",
+    totalWater: "एकूण उपलब्ध पाणी",
+    totalBudget: "एकूण मोसमी अंदाजपत्रक",
+    remainingBudget: "शिल्लक तरलता",
   },
 }
 
 export default function ProfilePage({ language, user, onLogout }: ProfilePageProps) {
-  const t = translations[language]
+  const t = translations[language] || translations.en
   const { setLanguage } = useLanguage()
   const [isEditing, setIsEditing] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [farmData, setFarmData] = useState<any>(null)
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false)
   const [showMap, setShowMap] = useState(false)
-  const [userLocation, setUserLocation] = useState(user.location || { name: "Not set", lat: 0, lng: 0 })
+  const [userLocation, setUserLocation] = useState(user?.location || { name: "Baramati, Pune", lat: 18.1512, lng: 74.5824 })
 
-  const predictionHistory = [
-    {
-      id: 1,
-      crop: "Wheat",
-      date: "2024-10-20",
-      time: "14:30",
-      nitrogen: 45,
-      phosphorus: 30,
-      potassium: 25,
-      ph: 7.2,
-    },
-    {
-      id: 2,
-      crop: "Cotton",
-      date: "2024-10-18",
-      time: "10:15",
-      nitrogen: 50,
-      phosphorus: 35,
-      potassium: 28,
-      ph: 6.8,
-    },
-    {
-      id: 3,
-      crop: "Rice",
-      date: "2024-10-15",
-      time: "09:45",
-      nitrogen: 55,
-      phosphorus: 32,
-      potassium: 30,
-      ph: 7.0,
-    },
-  ]
+  // Fetch farm profile from FastAPI backend
+  const fetchFarm = async () => {
+    setLoading(true)
+    try {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001"
+      const res = await fetch(`${apiBase}/api/farms/default`)
+      if (res.ok) {
+        const data = await res.json()
+        setFarmData(data)
+        setUserLocation({
+          name: `${data.taluka}, ${data.district}`,
+          lat: data.latitude,
+          lng: data.longitude,
+        })
+      }
+    } catch (err) {
+      console.warn("Backend not reachable, loading pilot fallback state")
+    } finally {
+      setLoading(false)
+    }
+  }
 
-  const handleLocationSelect = (location: any) => {
-    setUserLocation(location)
-    setShowMap(false)
+  useEffect(() => {
+    fetchFarm()
+  }, [])
+
+  // Fallback defaults if backend is offline during frontend dev
+  const activeFarm = farmData || {
+    id: "farm-mh-001",
+    name: "Sahyadri Krishi Farm",
+    farmer_name: user?.name || "Ganesh Kadlag",
+    phone: user?.mobile || "+91 98765 43210",
+    state: "Maharashtra",
+    district: "Pune",
+    taluka: "Baramati",
+    village: "Malegaon Khurd",
+    latitude: 18.1512,
+    longitude: 74.5824,
+    total_area_acres: 4.5,
+    budget: {
+      total_budget_inr: 60000.0,
+      spent_inr: 22000.0,
+      remaining_inr: 38000.0,
+    },
+    water_assets: [
+      { id: "wa-1", source_type: "farm_pond", current_storage_liters: 65000, max_capacity_liters: 100000 },
+      { id: "wa-2", source_type: "borewell", current_storage_liters: 15000, max_capacity_liters: 20000 },
+    ],
+    plots: [
+      {
+        id: "plot-1",
+        name: "North Plot - Kharif Cash Crop",
+        area_acres: 2.5,
+        current_crop: "Soybean",
+        variety: "JS 335",
+        sowing_date: "2026-06-25",
+        growth_stage: "mid_season",
+        irrigation_method: "drip",
+        soil: { soil_type: "Medium Deep Black (Vertisol)", ph: 7.4, nitrogen: 195, phosphorus: 24, potassium: 280, is_measured: true },
+      },
+      {
+        id: "plot-2",
+        name: "South Valley Plot",
+        area_acres: 2.0,
+        current_crop: "Onion",
+        variety: "Bhima Super",
+        sowing_date: "2026-08-10",
+        growth_stage: "development",
+        irrigation_method: "sprinkler",
+        soil: { soil_type: "Clay Loam", ph: 7.1, nitrogen: 170, phosphorus: 19.5, potassium: 210, is_measured: true },
+      },
+    ],
+    last_updated: "2026-10-30 11:30:00",
+  }
+
+  const totalWaterStorage = activeFarm.water_assets.reduce(
+    (acc: number, curr: any) => acc + (curr.current_storage_liters || 0),
+    0
+  )
+
+  const handleSaveFarm = async () => {
+    setIsEditing(false)
+    try {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001"
+      await fetch(`${apiBase}/api/farms/${activeFarm.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(activeFarm),
+      })
+    } catch (e) {
+      console.warn("Could not sync with backend directly")
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-amber-50 to-green-100 py-12">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-10 w-40 h-40 bg-green-200 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob"></div>
-        <div className="absolute bottom-20 left-10 w-40 h-40 bg-amber-200 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob animation-delay-2000"></div>
-      </div>
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col items-center mb-12">
-          <div className="relative mb-6">
-            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg border-4 border-white">
-              <User className="w-16 h-16 text-white" />
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Profile Header Card */}
+        <Card className="p-8 mb-8 bg-card/80 backdrop-blur-sm border border-border shadow-lg">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+            <div className="relative">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-3xl font-bold shadow-md">
+                {activeFarm.farmer_name ? activeFarm.farmer_name.charAt(0) : "G"}
+              </div>
             </div>
-            <button className="absolute bottom-0 right-0 bg-primary hover:bg-primary/90 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110">
-              <Camera className="w-5 h-5" />
-            </button>
+
+            <div className="flex-1 text-center md:text-left">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                <h1 className="text-2xl font-bold text-foreground">{activeFarm.name}</h1>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  {t.twinSynchronized}
+                </span>
+              </div>
+              <p className="text-muted-foreground text-sm mt-1">
+                {activeFarm.farmer_name} &bull; {activeFarm.village}, {activeFarm.taluka}, {activeFarm.district} ({activeFarm.state})
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2 justify-center md:justify-start">
+                <span className="text-xs px-2.5 py-1 rounded-md bg-secondary text-secondary-foreground font-medium">
+                  {t.pilotBadge}
+                </span>
+                <span className="text-xs px-2.5 py-1 rounded-md bg-muted text-muted-foreground">
+                  Last Twin Synced: {activeFarm.last_updated}
+                </span>
+              </div>
+            </div>
+
+            {/* Quick KPI Strip */}
+            <div className="grid grid-cols-2 gap-3 w-full md:w-auto">
+              <div className="p-3 bg-primary/5 rounded-xl border border-primary/20 text-center">
+                <span className="text-xs text-muted-foreground block">{t.totalWater}</span>
+                <span className="text-lg font-bold text-primary flex items-center justify-center gap-1">
+                  <Droplets className="w-4 h-4 text-sky-500" />
+                  {(totalWaterStorage / 1000).toFixed(0)}k L
+                </span>
+              </div>
+              <div className="p-3 bg-amber-500/5 rounded-xl border border-amber-500/20 text-center">
+                <span className="text-xs text-muted-foreground block">{t.remainingBudget}</span>
+                <span className="text-lg font-bold text-amber-600 dark:text-amber-400 flex items-center justify-center gap-1">
+                  <Coins className="w-4 h-4" />
+                  ₹{activeFarm.budget.remaining_inr.toLocaleString()}
+                </span>
+              </div>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">{user.fullName}</h1>
-          <p className="text-muted-foreground mt-1">{userLocation.name}</p>
-        </div>
+        </Card>
 
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-foreground">{t.profile}</h2>
-        </div>
-
-        <Tabs defaultValue="personal" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8 bg-white/50 backdrop-blur-sm border border-white/20">
-            <TabsTrigger value="personal" className="flex items-center gap-2">
+        {/* Tabbed Profile Navigation */}
+        <Tabs defaultValue="plots" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-muted/60 p-1.5 rounded-xl border border-border">
+            <TabsTrigger value="plots" className="flex items-center gap-2">
+              <Layers className="w-4 h-4" />
+              {t.landInfo}
+            </TabsTrigger>
+            <TabsTrigger value="assets" className="flex items-center gap-2">
+              <Droplets className="w-4 h-4" />
+              {t.waterAndBudget}
+            </TabsTrigger>
+            <TabsTrigger value="identity" className="flex items-center gap-2">
               <User className="w-4 h-4" />
-              <span className="hidden sm:inline text-xs">{t.personalInfo}</span>
-            </TabsTrigger>
-            <TabsTrigger value="land" className="flex items-center gap-2">
-              <Leaf className="w-4 h-4" />
-              <span className="hidden sm:inline text-xs">{t.landInfo}</span>
-            </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2">
-              <History className="w-4 h-4" />
-              <span className="hidden sm:inline text-xs">{t.predictionHistory}</span>
+              {t.personalInfo}
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline text-xs">{t.settings}</span>
+              {t.settings}
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="personal">
-            <Card className="p-8 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-foreground mb-2">{t.name}</label>
-                    <Input value={user.fullName} disabled={!isEditing} className="bg-background/50 border-border/50" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-foreground mb-2">{t.dob}</label>
-                    <Input value={user.dob} disabled={!isEditing} className="bg-background/50 border-border/50" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-foreground mb-2">{t.mobile}</label>
-                    <Input value={user.mobile} disabled={!isEditing} className="bg-background/50 border-border/50" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-foreground mb-2">{t.totalPredictions}</label>
-                    <Input
-                      value={user.totalPredictions || predictionHistory.length}
-                      disabled
-                      className="bg-background/50 border-border/50"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex gap-4 pt-4">
-                  {!isEditing ? (
-                    <Button
-                      onClick={() => setIsEditing(true)}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                    >
-                      {t.edit}
-                    </Button>
-                  ) : (
-                    <>
-                      <Button
-                        onClick={() => setIsEditing(false)}
-                        className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                      >
-                        {t.save}
-                      </Button>
-                      <Button onClick={() => setIsEditing(false)} variant="outline" className="font-semibold">
-                        {t.cancel}
-                      </Button>
-                    </>
-                  )}
-                </div>
+          {/* PLOT LEDGER TAB */}
+          <TabsContent value="plots" className="space-y-6">
+            <div className="flex justify-between items-center mb-2">
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">Registered Field Plots ({activeFarm.plots.length})</h3>
+                <p className="text-xs text-muted-foreground">Each plot maintains its own soil profile and crop-water balance in the digital twin.</p>
               </div>
-            </Card>
-          </TabsContent>
+              <Button size="sm" variant="outline" className="gap-1.5">
+                <PlusCircle className="w-4 h-4" />
+                Add Plot
+              </Button>
+            </div>
 
-          <TabsContent value="land">
-            <Card className="p-8 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">{t.location}</label>
-                  <div className="flex gap-3">
-                    <Input value={userLocation.name} disabled className="bg-background/50 border-border/50 flex-1" />
-                    <Button
-                      onClick={() => setShowMap(true)}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold flex items-center gap-2"
-                    >
-                      <MapPin className="w-4 h-4" />
-                      {t.selectLocation}
-                    </Button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {activeFarm.plots.map((plot: any, idx: number) => (
+                <Card key={plot.id || idx} className="p-6 bg-card/90 border border-border/80 shadow-md hover:border-primary/50 transition-colors">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                        Plot #{idx + 1} &bull; {plot.area_acres} Acres
+                      </span>
+                      <h4 className="text-base font-bold text-foreground mt-1">{plot.name}</h4>
+                    </div>
+                    <span className="text-xs uppercase font-bold tracking-wider px-2 py-1 rounded bg-muted text-muted-foreground">
+                      {plot.irrigation_method}
+                    </span>
                   </div>
-                  {userLocation.lat !== 0 && (
-                    <div className="grid grid-cols-2 gap-4 mt-4 p-4 bg-background/30 rounded-lg">
-                      <div>
-                        <p className="text-xs text-muted-foreground uppercase font-semibold">{t.latitude}</p>
-                        <p className="text-sm font-semibold text-foreground">{userLocation.lat.toFixed(4)}</p>
+
+                  <div className="grid grid-cols-2 gap-3 py-3 border-y border-border/60 text-sm">
+                    <div>
+                      <span className="text-xs text-muted-foreground block">Crop & Variety</span>
+                      <span className="font-semibold text-foreground">{plot.current_crop} ({plot.variety || "Std"})</span>
+                    </div>
+                    <div>
+                      <span className="text-xs text-muted-foreground block">Growth Stage</span>
+                      <span className="font-semibold text-primary capitalize">{plot.growth_stage.replace("_", " ")}</span>
+                    </div>
+                    <div>
+                      <span className="text-xs text-muted-foreground block">Sowing Date</span>
+                      <span className="font-medium text-foreground">{plot.sowing_date}</span>
+                    </div>
+                    <div>
+                      <span className="text-xs text-muted-foreground block">Soil Classification</span>
+                      <span className="font-medium text-foreground">{plot.soil?.soil_type || "Vertisol"}</span>
+                    </div>
+                  </div>
+
+                  {/* Soil Health Values */}
+                  <div className="mt-4 pt-2">
+                    <span className="text-xs font-semibold text-muted-foreground block mb-2">Soil Test Profile (NPK & pH)</span>
+                    <div className="grid grid-cols-4 gap-2 text-center text-xs">
+                      <div className="p-2 bg-muted/50 rounded-lg">
+                        <span className="text-muted-foreground block">N</span>
+                        <span className="font-bold text-foreground">{plot.soil?.nitrogen}</span>
                       </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground uppercase font-semibold">{t.longitude}</p>
-                        <p className="text-sm font-semibold text-foreground">{userLocation.lng.toFixed(4)}</p>
+                      <div className="p-2 bg-muted/50 rounded-lg">
+                        <span className="text-muted-foreground block">P</span>
+                        <span className="font-bold text-foreground">{plot.soil?.phosphorus}</span>
+                      </div>
+                      <div className="p-2 bg-muted/50 rounded-lg">
+                        <span className="text-muted-foreground block">K</span>
+                        <span className="font-bold text-foreground">{plot.soil?.potassium}</span>
+                      </div>
+                      <div className="p-2 bg-muted/50 rounded-lg">
+                        <span className="text-muted-foreground block">pH</span>
+                        <span className="font-bold text-primary">{plot.soil?.ph}</span>
                       </div>
                     </div>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-foreground mb-2">{t.landArea}</label>
-                    <Input value={`${user.landArea} acres`} disabled className="bg-background/50 border-border/50" />
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-foreground mb-2">{t.nitrogen}</label>
-                    <Input value={user.nitrogen} disabled className="bg-background/50 border-border/50" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-foreground mb-2">{t.phosphorus}</label>
-                    <Input value={user.phosphorus} disabled className="bg-background/50 border-border/50" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-foreground mb-2">{t.potassium}</label>
-                    <Input value={user.potassium} disabled className="bg-background/50 border-border/50" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-foreground mb-2">{t.ph}</label>
-                    <Input value={user.ph} disabled className="bg-background/50 border-border/50" />
-                  </div>
-                </div>
-              </div>
-            </Card>
+                </Card>
+              ))}
+            </div>
           </TabsContent>
 
-          <TabsContent value="history">
-            <Card className="p-8 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                    <History className="w-5 h-5 text-primary" />
-                    {t.predictionHistory}
-                  </h3>
-                  <div className="bg-primary/10 px-4 py-2 rounded-lg">
-                    <p className="text-sm font-semibold text-primary">
-                      {t.totalPredictions}: {predictionHistory.length}
-                    </p>
+          {/* WATER & BUDGET ASSETS TAB */}
+          <TabsContent value="assets" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Water Storage Card */}
+              <Card className="p-6 bg-card border border-border shadow-md">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="p-2 rounded-lg bg-sky-500/10 text-sky-500">
+                    <Droplets className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-foreground">Water Asset Inventory</h4>
+                    <p className="text-xs text-muted-foreground">Limits simulation scenario feasibility</p>
                   </div>
                 </div>
 
-                {predictionHistory.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Leaf className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                    <p className="text-muted-foreground">{t.noPredictions}</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {predictionHistory.map((prediction) => (
-                      <Card
-                        key={prediction.id}
-                        className="p-4 bg-gradient-to-r from-green-50 to-amber-50 border-green-200 hover:shadow-lg transition-all cursor-pointer"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4 flex-1">
-                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                              <Leaf className="w-6 h-6 text-primary" />
-                            </div>
-                            <div className="flex-1">
-                              <p className="font-semibold text-foreground">{prediction.crop}</p>
-                              <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
-                                <span className="flex items-center gap-1">
-                                  <Calendar className="w-3 h-3" />
-                                  {prediction.date}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <Clock className="w-3 h-3" />
-                                  {prediction.time}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-xs text-muted-foreground mb-2">{t.details}</p>
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                              <div>
-                                <p className="text-muted-foreground">N: {prediction.nitrogen}</p>
-                              </div>
-                              <div>
-                                <p className="text-muted-foreground">P: {prediction.phosphorus}</p>
-                              </div>
-                              <div>
-                                <p className="text-muted-foreground">K: {prediction.potassium}</p>
-                              </div>
-                              <div>
-                                <p className="text-muted-foreground">pH: {prediction.ph}</p>
-                              </div>
-                            </div>
-                          </div>
+                <div className="space-y-3">
+                  {activeFarm.water_assets.map((asset: any) => {
+                    const pct = Math.min(100, Math.round((asset.current_storage_liters / asset.max_capacity_liters) * 100))
+                    return (
+                      <div key={asset.id} className="p-3 bg-muted/40 rounded-xl border border-border/50">
+                        <div className="flex justify-between items-center text-sm mb-1">
+                          <span className="font-semibold text-foreground capitalize">{asset.source_type.replace("_", " ")}</span>
+                          <span className="text-xs font-bold text-primary">{asset.current_storage_liters.toLocaleString()} / {asset.max_capacity_liters.toLocaleString()} L</span>
                         </div>
-                      </Card>
-                    ))}
+                        <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                          <div className="bg-sky-500 h-2 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </Card>
+
+              {/* Financial Budget Card */}
+              <Card className="p-6 bg-card border border-border shadow-md">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="p-2 rounded-lg bg-amber-500/10 text-amber-500">
+                    <Coins className="w-5 h-5" />
                   </div>
+                  <div>
+                    <h4 className="font-bold text-foreground">Farm Working Budget</h4>
+                    <p className="text-xs text-muted-foreground">Governs inputs, drip maintenance and labour</p>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-muted/40 rounded-xl border border-border/50 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">{t.totalBudget}</span>
+                    <span className="text-base font-bold text-foreground">₹{activeFarm.budget.total_budget_inr.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Utilized Expenditure</span>
+                    <span className="text-base font-semibold text-rose-500">₹{activeFarm.budget.spent_inr.toLocaleString()}</span>
+                  </div>
+                  <div className="pt-2 border-t border-border flex justify-between items-center">
+                    <span className="text-sm font-bold text-foreground">{t.remainingBudget}</span>
+                    <span className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">₹{activeFarm.budget.remaining_inr.toLocaleString()}</span>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* IDENTITY TAB */}
+          <TabsContent value="identity">
+            <Card className="p-8 bg-card border border-border shadow-md">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-2">{t.name}</label>
+                  <Input value={activeFarm.farmer_name} disabled={!isEditing} className="bg-background/50 border-border" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-2">{t.mobile}</label>
+                  <Input value={activeFarm.phone} disabled={!isEditing} className="bg-background/50 border-border" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-2">Taluka & District</label>
+                  <Input value={`${activeFarm.taluka}, ${activeFarm.district}`} disabled className="bg-background/50 border-border" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-2">{t.landArea}</label>
+                  <Input value={`${activeFarm.total_area_acres} Acres`} disabled className="bg-background/50 border-border" />
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-6">
+                {!isEditing ? (
+                  <Button onClick={() => setIsEditing(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                    {t.edit}
+                  </Button>
+                ) : (
+                  <>
+                    <Button onClick={handleSaveFarm} className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                      {t.save}
+                    </Button>
+                    <Button onClick={() => setIsEditing(false)} variant="outline">
+                      {t.cancel}
+                    </Button>
+                  </>
                 )}
               </div>
             </Card>
           </TabsContent>
 
+          {/* SETTINGS TAB */}
           <TabsContent value="settings">
-            <div className="space-y-6">
-              <Card className="p-8 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
-                <div className="flex items-center gap-3 mb-6">
-                  <Globe className="w-5 h-5 text-primary" />
-                  <h3 className="text-lg font-semibold text-foreground">{t.language}</h3>
-                </div>
-                <p className="text-sm text-muted-foreground mb-6">{t.selectLanguage}</p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <Button
-                    onClick={() => setLanguage("en")}
-                    variant={language === "en" ? "default" : "outline"}
-                    className={
-                      language === "en"
-                        ? "bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-auto py-4 flex flex-col gap-1"
-                        : "font-semibold h-auto py-4 flex flex-col gap-1"
-                    }
-                  >
-              
-                    <span className="text-xs">{t.english}</span>
-                  </Button>
-                  <Button
-                    onClick={() => setLanguage("hi")}
-                    variant={language === "hi" ? "default" : "outline"}
-                    className={
-                      language === "hi"
-                        ? "bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-auto py-4 flex flex-col gap-1"
-                        : "font-semibold h-auto py-4 flex flex-col gap-1"
-                    }
-                  >
-                  
-                    <span className="text-xs">{t.hindi}</span>
-                  </Button>
-                  <Button
-                    onClick={() => setLanguage("ur")}
-                    variant={language === "ur" ? "default" : "outline"}
-                    className={
-                      language === "ur"
-                        ? "bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-auto py-4 flex flex-col gap-1"
-                        : "font-semibold h-auto py-4 flex flex-col gap-1"
-                    }
-                  >
-                   
-                    <span className="text-xs">{t.urdu}</span>
-                  </Button>
-                  <Button
-                    onClick={() => setLanguage("mr")}
-                    variant={language === "mr" ? "default" : "outline"}
-                    className={
-                      language === "mr"
-                        ? "bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-auto py-4 flex flex-col gap-1"
-                        : "font-semibold h-auto py-4 flex flex-col gap-1"
-                    }
-                  >
-                    
-                    <span className="text-xs">{t.marathi}</span>
-                  </Button>
-                </div>
-              </Card>
-
-              <Card className="p-8 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
-                <div className="flex items-center gap-3 mb-6">
-                  <Bell className="w-5 h-5 text-primary" />
-                  <h3 className="text-lg font-semibold text-foreground">{t.notifications}</h3>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-background/30 rounded-lg">
-                    <label className="text-sm font-medium text-foreground">{t.enableNotifications}</label>
-                    <input
-                      type="checkbox"
-                      checked={notificationsEnabled}
-                      onChange={(e) => setNotificationsEnabled(e.target.checked)}
-                      className="w-5 h-5 cursor-pointer"
-                    />
+            <Card className="p-8 bg-card border border-border shadow-md">
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-2">{t.language}</label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {[
+                      { code: "en", label: t.english },
+                      { code: "mr", label: t.marathi },
+                      { code: "hi", label: t.hindi },
+                      { code: "ur", label: t.urdu },
+                    ].map((lang) => (
+                      <Button
+                        key={lang.code}
+                        variant={language === lang.code ? "default" : "outline"}
+                        onClick={() => setLanguage(lang.code as Language)}
+                        className="w-full justify-start font-semibold"
+                      >
+                        {lang.label}
+                      </Button>
+                    ))}
                   </div>
                 </div>
-              </Card>
 
-              <Card className="p-8 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
-                <div className="flex items-center gap-3 mb-6">
-                  <Shield className="w-5 h-5 text-primary" />
-                  <h3 className="text-lg font-semibold text-foreground">{t.privacy}</h3>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-background/30 rounded-lg">
-                    <label className="text-sm font-medium text-foreground">{t.twoFactor}</label>
-                    <input
-                      type="checkbox"
-                      checked={twoFactorEnabled}
-                      onChange={(e) => setTwoFactorEnabled(e.target.checked)}
-                      className="w-5 h-5 cursor-pointer"
-                    />
+                <div className="pt-6 border-t border-border flex justify-between items-center">
+                  <div>
+                    <h4 className="font-semibold text-foreground">{t.signOut}</h4>
+                    <p className="text-xs text-muted-foreground">{t.endSession}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2">{t.accountSecurity}</p>
-                </div>
-              </Card>
-
-              <Card className="p-8 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg border-red-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <LogOut className="w-5 h-5 text-red-600" />
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground">{t.signOut}</h3>
-                      <p className="text-sm text-muted-foreground">{t.endSession}</p>
-                    </div>
-                  </div>
-                  <Button onClick={onLogout} className="bg-red-600 hover:bg-red-700 text-white font-semibold">
+                  <Button variant="destructive" onClick={onLogout} className="gap-2 font-semibold">
+                    <LogOut className="w-4 h-4" />
                     {t.logout}
                   </Button>
                 </div>
-              </Card>
-            </div>
+              </div>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
-
-      {showMap && (
-        <InteractiveMap language={language} onSelect={handleLocationSelect} onClose={() => setShowMap(false)} />
-      )}
     </div>
   )
 }

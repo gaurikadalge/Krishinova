@@ -18,7 +18,7 @@ export const STATS_DATA = {
 
 const translations = {
   en: {
-    badge: "Verified Impact",
+    badge: "Verified Field Impact",
     heading: "Empowering Rural Maharashtra with Precision AI",
     stats: [
       { id: "farmers", label: "Farmers Empowered", sub: "Active across Maharashtra" },
@@ -28,7 +28,7 @@ const translations = {
     ],
   },
   hi: {
-    badge: "सत्यापित प्रभाव",
+    badge: "सत्यापित जमीनी प्रभाव",
     heading: "सटीक AI के साथ ग्रामीण महाराष्ट्र का सशक्तिकरण",
     stats: [
       { id: "farmers", label: "सशक्त किसान", sub: "महाराष्ट्र भर में सक्रिय" },
@@ -48,7 +48,7 @@ const translations = {
     ],
   },
   mr: {
-    badge: "प्रमाणित प्रभाव",
+    badge: "प्रमाणित क्षेत्रीय प्रभाव",
     heading: "अचूक कृषी AI द्वारे ग्रामीण महाराष्ट्राचे सक्षमीकरण",
     stats: [
       { id: "farmers", label: "सशक्त शेतकरी", sub: "महाराष्ट्रभर सक्रिय" },
@@ -99,57 +99,51 @@ export default function StatsStrip({ language, className = "" }: StatsStripProps
     <section
       ref={ref}
       dir={isRtl ? "rtl" : "ltr"}
-      className={`relative w-full py-14 md:py-20 overflow-hidden bg-transparent ${className}`}
+      className={`relative w-full py-16 md:py-24 bg-[#F5F7F3] border-b border-[#E5EBE5] ${className}`}
     >
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
-          className={`text-center max-w-2xl mx-auto mb-12 transition-all duration-700 ${
+          className={`text-center max-w-2xl mx-auto mb-14 transition-all duration-700 ${
             isRevealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
         >
-          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-white/10 backdrop-blur-md text-white border border-white/15 mb-4">
-            <span className="w-2 h-2 rounded-full bg-[#c8f53c] animate-pulse shrink-0" />
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-[#DDF3E6] text-[#073B2A] border border-[#16A36A]/20 mb-3 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-[#16A36A] animate-pulse shrink-0" />
             {t.badge}
           </span>
-          <h2 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight font-heading drop-shadow-md">
+          <h2 className="text-2xl md:text-4xl font-extrabold text-[#25352C] tracking-tight font-heading">
             {t.heading}
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {t.stats.map((stat, idx) => {
             const Icon = icons[idx]
             return (
               <div
                 key={stat.id}
-                style={{ transitionDelay: `${idx * 120}ms` }}
-                className={`relative p-6 rounded-2xl backdrop-blur-xl border transition-all duration-500 group flex flex-col justify-between overflow-hidden
-                  bg-white/10 border-white/15 hover:bg-white/15 hover:border-[#c8f53c]/30 hover:-translate-y-2
-                  shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_12px_40px_-8px_rgba(0,0,0,0.25)]
-                  hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_16px_50px_-8px_rgba(0,0,0,0.35),0_0_25px_-5px_rgba(200,245,60,0.15)]
-                  ${isRevealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                style={{ transitionDelay: `${idx * 100}ms` }}
+                className={`relative p-6 rounded-3xl bg-white border border-[#E5EBE5] shadow-sm hover:shadow-md hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between ${
+                  isRevealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
               >
-                {/* Glass shine animation */}
-                <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-                  <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-white/8 via-transparent to-transparent rotate-12 group-hover:translate-x-full group-hover:translate-y-full transition-transform duration-700" />
-                </div>
-
-                <div className="relative z-10">
+                <div>
                   <div className="flex items-center justify-between mb-5">
-                    <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 group-hover:bg-[#c8f53c] group-hover:border-[#c8f53c] text-white group-hover:text-[#0a1f13] flex items-center justify-center transition-all duration-300">
-                      <Icon className="w-5 h-5 transition-transform group-hover:scale-110" />
+                    <div className="w-12 h-12 rounded-2xl bg-[#DDF3E6] text-[#087A4B] flex items-center justify-center border border-[#16A36A]/20">
+                      <Icon className="w-6 h-6" />
                     </div>
-                    <span className="w-2.5 h-2.5 rounded-full bg-white/10 group-hover:bg-[#c8f53c] transition-all duration-300 group-hover:shadow-[0_0_12px_rgba(200,245,60,0.5)]" />
+                    <span className="w-2 h-2 rounded-full bg-[#16A36A]" />
                   </div>
-                  <div className="mb-3">
-                    <div className="font-heading text-3xl sm:text-4xl font-extrabold text-white tracking-tight group-hover:text-[#c8f53c] transition-colors">
+                  <div className="mb-2">
+                    <div className="font-heading text-3xl sm:text-4xl font-extrabold text-[#073B2A] tracking-tight">
                       {formattedValues[idx]}
                     </div>
                   </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-white/90">{stat.label}</h3>
-                    <p className="text-xs text-white/50 mt-0.5">{stat.sub}</p>
-                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-[#F0F5F0]">
+                  <h3 className="text-sm font-bold text-[#25352C]">{stat.label}</h3>
+                  <p className="text-xs text-[#68766C] mt-0.5">{stat.sub}</p>
                 </div>
               </div>
             )

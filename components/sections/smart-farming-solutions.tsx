@@ -248,12 +248,12 @@ export default function SmartFarmingSolutions({ language, className }: SmartFarm
       ref={ref}
       dir={isRtl ? "rtl" : "ltr"}
       className={cn(
-        "w-full py-16 md:py-24 bg-transparent px-4 md:px-8 relative overflow-hidden transition-all duration-700",
+        "w-full py-12 md:py-20 bg-[#F5F7F3] px-4 sm:px-6 lg:px-8 relative overflow-hidden transition-all duration-700",
         isRevealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
         className
       )}
     >
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto bg-[#073B2A] text-white border border-[#10543C] rounded-3xl p-8 sm:p-12 md:p-16 shadow-xl relative z-10">
         {/* Pill Badge */}
         <div className="mb-6">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold rounded-full bg-white/20 dark:bg-white/10 backdrop-blur-xl text-white border border-white/30 dark:border-white/15 shadow-xs">

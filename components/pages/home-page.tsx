@@ -11,7 +11,9 @@ import { TrustMarquee, StatsStrip, HomeClosingSections } from "@/components/sect
 
 interface HomePageProps {
   language: "en" | "hi" | "ur" | "mr"
-  user: any
+  user?: any
+  onGetStarted?: () => void
+  onWatchDemo?: () => void
 }
 
 const translations = {
@@ -82,10 +84,10 @@ const translations = {
   },
 }
 
-export default function HomePage({ language, user }: HomePageProps) {
+export default function HomePage({ language, user, onGetStarted, onWatchDemo }: HomePageProps) {
   const t = translations[language] || translations.en
   const [visibleCards, setVisibleCards] = useState<boolean[]>([false, false, false, false])
-  const [bgOpacity, setBgOpacity] = useState<number>(0)
+  const [bgOpacity, setBgOpacity] = useState<number>(1)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -144,12 +146,23 @@ export default function HomePage({ language, user }: HomePageProps) {
             {t.description}
           </p>
           <div className="flex flex-col sm:flex-row gap-5 justify-center items-center animate-fade-in-up animate-delay-300">
-            <Button className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-10 h-14 text-lg font-medium shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 rounded-full">
-              {t.getStarted}
+            <Button
+              onClick={onGetStarted}
+              className="w-full sm:w-auto bg-[#087A4B] hover:bg-[#06633D] text-white px-10 h-14 text-lg font-bold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 rounded-full cursor-pointer"
+            >
+              {t.getStarted} &rarr;
             </Button>
             <Button
+              onClick={() => {
+                if (onWatchDemo) {
+                  onWatchDemo()
+                } else {
+                  const el = document.getElementById("features-section")
+                  if (el) el.scrollIntoView({ behavior: "smooth" })
+                }
+              }}
               variant="outline"
-              className="w-full sm:w-auto px-10 h-14 text-lg font-medium border-2 border-white/80 text-white hover:bg-white hover:text-primary bg-transparent shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-full backdrop-blur-sm"
+              className="w-full sm:w-auto px-10 h-14 text-lg font-semibold border-2 border-white/80 text-white hover:bg-white hover:text-[#073B2A] bg-transparent shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-full backdrop-blur-sm cursor-pointer"
             >
               {t.watchDemo}
             </Button>
@@ -166,45 +179,40 @@ export default function HomePage({ language, user }: HomePageProps) {
       {/* SECTION 2: SMART FARMING SOLUTIONS */}
       <SmartFarmingSolutions language={language} />
 
-      {/* FEATURES SECTION WITH SCROLL FADE-IN */}
+      {/* FEATURES SECTION — HIGH-CONTRAST BOTANICAL INTELLIGENCE */}
       <section
         id="features-section"
-        className="relative min-h-screen flex flex-col justify-center py-20 bg-cover bg-center bg-[url('/Land.jpeg')]"
-        style={{
-          opacity: bgOpacity,
-          transition: "opacity 0.5s ease-out",
-        }}
+        className="w-full py-20 md:py-28 bg-[#F5F7F3] border-b border-[#E5EBE5]"
       >
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <h2 className="font-heading text-4xl md:text-5xl font-bold text-white mb-6 drop-shadow-md">{t.features}</h2>
-            <div className="w-24 h-1.5 bg-gradient-to-r from-primary to-accent mx-auto rounded-full opacity-80" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-[#DDF3E6] text-[#073B2A] border border-[#16A36A]/20 mb-3 shadow-sm">
+              <Leaf className="w-3.5 h-3.5 text-[#087A4B]" />
+              Core Agricultural Capabilities
+            </span>
+            <h2 className="font-heading text-3xl sm:text-5xl font-extrabold text-[#25352C] tracking-tight mb-4">
+              {t.features}
+            </h2>
+            <div className="w-20 h-1.5 bg-[#087A4B] mx-auto rounded-full" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => {
               const Icon = feature.icon
               return (
                 <div
                   key={index}
-                  className="feature-card h-full"
-                  style={{
-                    opacity: visibleCards[index] ? 1 : 0,
-                    transform: visibleCards[index] ? "translateY(0)" : "translateY(40px)",
-                    transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
-                    transitionDelay: `${index * 150}ms`,
-                  }}
+                  className="h-full p-8 rounded-3xl bg-white border border-[#E5EBE5] shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center group"
                 >
-                  <Card className="p-8 h-full hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 bg-white/95 backdrop-blur-md border-0 group rounded-2xl flex flex-col items-center text-center">
-                    <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:shadow-md transition-all duration-300">
-                      <Icon className="w-10 h-10 text-primary group-hover:text-accent transition-colors" />
-                    </div>
-                    <h3 className="font-heading text-xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors">
-                      {feature.title}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed flex-grow">{feature.description}</p>
-                  </Card>
+                  <div className="w-16 h-16 rounded-2xl bg-[#DDF3E6] text-[#087A4B] flex items-center justify-center mb-6 group-hover:bg-[#087A4B] group-hover:text-white transition-all shadow-sm">
+                    <Icon className="w-8 h-8" />
+                  </div>
+                  <h3 className="font-heading text-xl font-bold text-[#25352C] mb-3 group-hover:text-[#087A4B] transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-[#68766C] leading-relaxed flex-grow">
+                    {feature.description}
+                  </p>
                 </div>
               )
             })}

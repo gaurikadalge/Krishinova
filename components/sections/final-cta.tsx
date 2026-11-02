@@ -98,10 +98,10 @@ export default function FinalCTA({
     <section
       ref={ref}
       dir={isRtl ? "rtl" : "ltr"}
-      className={`w-full py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-background relative overflow-hidden ${className}`}
+      className={`w-full py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-[#F5F7F3] relative overflow-hidden ${className}`}
     >
       <div
-        className={`max-w-6xl mx-auto rounded-3xl p-8 sm:p-12 md:p-16 lg:p-20 relative overflow-hidden shadow-2xl transition-all duration-700 ${
+        className={`max-w-6xl mx-auto bg-[#073B2A] border border-[#10543C] rounded-3xl p-8 sm:p-12 md:p-16 lg:p-20 relative overflow-hidden shadow-2xl transition-all duration-700 ${
           isRevealed ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >

@@ -139,6 +139,47 @@ export default function ExecutiveDashboard({
 
   return (
     <div className="space-y-6">
+      {/* LIVE DIGITAL TWIN TELEMETRY BANNER */}
+      <div className="p-4 rounded-3xl bg-white border border-[#E5EBE5] flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-[#DDF3E6] text-[#087A4B] flex items-center justify-center shrink-0 shadow-xs">
+            <Activity className="w-5 h-5 text-[#087A4B]" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] font-bold text-[#087A4B] uppercase tracking-wider flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#16A36A] animate-pulse shrink-0" />
+                KrishiNova Botanical Intelligence Platform
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#DDF3E6] text-[#073B2A] border border-[#087A4B]/20 font-bold">
+                Live Digital Twin Active
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#F5F7F3] text-[#475549] border border-[#E5EBE5] font-semibold">
+                Baramati Agro-Climatic Zone &bull; 5.2 Acres
+              </span>
+            </div>
+            <p className="text-xs font-semibold text-[#25352C] mt-0.5">
+              {(d as any).taglineKrishinova || "Understand the farm. Anticipate climate risk. Plan with the resources available."}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => onNavigate("crop-demand")}
+            className="px-3.5 py-1.5 rounded-xl bg-[#F5F7F3] hover:bg-[#DDF3E6] text-[#073B2A] border border-[#E5EBE5] text-xs font-bold transition-all shadow-xs"
+          >
+            {d.cropPlanDemand || "Crop Demand"} &rarr;
+          </button>
+          <button
+            onClick={() => onNavigate("twin")}
+            className="px-3.5 py-1.5 rounded-xl bg-[#087A4B] hover:bg-[#073B2A] text-white text-xs font-bold transition-all shadow-sm"
+          >
+            {d.digitalTwin || "Scenario Lab"} &rarr;
+          </button>
+        </div>
+      </div>
+
       {/* GREETING BANNER & QUICK STATS */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

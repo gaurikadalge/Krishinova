@@ -4,7 +4,12 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Tractor, MapPin, Clock, Phone, PlusCircle, Search, ShieldCheck, X, MessageCircle, Minus, Plus, CheckCircle, Calendar, ChevronLeft, ChevronRight, Filter } from "lucide-react"
+import { 
+  Tractor, MapPin, Clock, Phone, PlusCircle, Search, ShieldCheck, X, 
+  MessageCircle, Minus, Plus, CheckCircle, Calendar, ChevronLeft, ChevronRight, 
+  Filter, TrendingUp, TrendingDown, ArrowUpRight, Sparkles, Sprout, Store, 
+  BarChart3, RefreshCw, AlertCircle, Coins, ShieldAlert, Award
+} from "lucide-react"
 
 interface MarketPageProps {
   language: "en" | "hi" | "ur" | "mr"
@@ -86,6 +91,318 @@ const translations = {
     submitList: "کرائے کے لیے درج کریں",
   }
 }
+
+
+export interface MandiRateItem {
+  id: string
+  cropName: string
+  cropNameLocal: Record<string, string>
+  variety: string
+  category: "ongoing" | "oilseed" | "vegetable" | "cereal" | "fruit" | "cash"
+  isCultivatedOnFarm: boolean
+  plotAssociation?: string
+  mandi: string
+  mandiDistrict: string
+  distanceKm: number
+  modalPrice: number
+  minPrice: number
+  maxPrice: number
+  unit: string
+  dayChange: number
+  percentChange: number
+  arrivalsToday: number // in Quintals
+  trend: "up" | "down" | "stable"
+  marketCondition: string
+  insight: string
+  insightMr: string
+  crossMandi: { name: string; price: number; diff: number }[]
+}
+
+export const liveMandiRates: MandiRateItem[] = [
+  {
+    id: "mandi-soybean",
+    cropName: "Soybean",
+    cropNameLocal: {
+      en: "Soybean (Yellow)",
+      hi: "सोयाबीन (पीला)",
+      mr: "सोयाबीन (पिवळा - JS 335)",
+      ur: "سویا بین"
+    },
+    variety: "JS 335",
+    category: "ongoing",
+    isCultivatedOnFarm: true,
+    plotAssociation: "Plot 1: North Plot (2.5 Acres)",
+    mandi: "Baramati APMC",
+    mandiDistrict: "Pune",
+    distanceKm: 8.5,
+    modalPrice: 4850,
+    minPrice: 4620,
+    maxPrice: 5120,
+    unit: "₹/Quintal",
+    dayChange: 90,
+    percentChange: 1.89,
+    arrivalsToday: 1420,
+    trend: "up",
+    marketCondition: "High Domestic Crushing Demand",
+    insight: "Solvent extraction plants in Daund and Baramati actively purchasing. Premium offered for moisture < 10%.",
+    insightMr: "बारामती व दौंड भागातील तेलगिरण्यांकडून मजबूत मागणी. १०% पेक्षा कमी ओलावा असल्यास जास्तीचा दर.",
+    crossMandi: [
+      { name: "Pune Market Yard", price: 4920, diff: 70 },
+      { name: "Solapur APMC", price: 4810, diff: -40 },
+      { name: "Latur APMC", price: 5040, diff: 190 }
+    ]
+  },
+  {
+    id: "mandi-onion",
+    cropName: "Onion",
+    cropNameLocal: {
+      en: "Red Onion",
+      hi: "लाल प्याज",
+      mr: "लाल कांदा (भीमा सुपर)",
+      ur: "لال پیاز"
+    },
+    variety: "Bhima Super",
+    category: "ongoing",
+    isCultivatedOnFarm: true,
+    plotAssociation: "Plot 2: South Valley Plot (2.0 Acres)",
+    mandi: "Baramati APMC",
+    mandiDistrict: "Pune",
+    distanceKm: 8.5,
+    modalPrice: 2450,
+    minPrice: 1850,
+    maxPrice: 2750,
+    unit: "₹/Quintal",
+    dayChange: 180,
+    percentChange: 7.93,
+    arrivalsToday: 3850,
+    trend: "up",
+    marketCondition: "Export Inquiries & Festive Demand",
+    insight: "Bids moving upward following Lasalgaon trend. Medium-to-large sorted bulbs commanding upper ceiling.",
+    insightMr: "लासलगाव बाजारातील दरवाढीमुळे बारामतीमध्येही सुधारणा. प्रतवारी केलेल्या चांगल्या कांद्याला उच्चांकी भाव.",
+    crossMandi: [
+      { name: "Lasalgaon (Nashik)", price: 2600, diff: 150 },
+      { name: "Pune Market Yard", price: 2520, diff: 70 },
+      { name: "Solapur APMC", price: 2380, diff: -70 }
+    ]
+  },
+  {
+    id: "mandi-wheat",
+    cropName: "Wheat",
+    cropNameLocal: {
+      en: "Wheat (Lokwan)",
+      hi: "गेहूं (लोकवन)",
+      mr: "गहू (लोकवन / सरबती)",
+      ur: "گندم"
+    },
+    variety: "Lokwan / Sharbati",
+    category: "cereal",
+    isCultivatedOnFarm: false,
+    mandi: "Pune Market Yard",
+    mandiDistrict: "Pune",
+    distanceKm: 62.0,
+    modalPrice: 2880,
+    minPrice: 2650,
+    maxPrice: 3150,
+    unit: "₹/Quintal",
+    dayChange: 30,
+    percentChange: 1.05,
+    arrivalsToday: 940,
+    trend: "up",
+    marketCondition: "Steady Flour Mill Consumption",
+    insight: "Consistent flour mill and bakery off-take. Dry grain quality maintaining solid price floor.",
+    insightMr: "पीठ गिरण्यांकडून सतत उचल. कोरड्या व चांगल्या दाण्यांच्या मालाला स्थिर आधारभाव.",
+    crossMandi: [
+      { name: "Baramati APMC", price: 2820, diff: -60 },
+      { name: "Ahmednagar APMC", price: 2860, diff: -20 }
+    ]
+  },
+  {
+    id: "mandi-cotton",
+    cropName: "Cotton",
+    cropNameLocal: {
+      en: "Cotton (Medium Staple)",
+      hi: "कपास (मध्यम रेशा)",
+      mr: "कापूस (मध्यम धागा)",
+      ur: "کپاس"
+    },
+    variety: "Medium Staple",
+    category: "cash",
+    isCultivatedOnFarm: false,
+    mandi: "Solapur APMC",
+    mandiDistrict: "Solapur",
+    distanceKm: 110.0,
+    modalPrice: 7150,
+    minPrice: 6800,
+    maxPrice: 7450,
+    unit: "₹/Quintal",
+    dayChange: -50,
+    percentChange: -0.69,
+    arrivalsToday: 620,
+    trend: "down",
+    marketCondition: "Textile Mill Cautious Buying",
+    insight: "International fiber futures soft. Ginning units waiting for moisture stabilization.",
+    insightMr: "आंतरराष्ट्रीय बाजारातील मंदीमुळे जिनिंग कारखान्यांकडून मर्यादित खरेदी.",
+    crossMandi: [
+      { name: "Jalna APMC", price: 7280, diff: 130 },
+      { name: "Baramati APMC", price: 7100, diff: -50 }
+    ]
+  },
+  {
+    id: "mandi-sugarcane",
+    cropName: "Sugarcane",
+    cropNameLocal: {
+      en: "Sugarcane (Co 86032)",
+      hi: "गन्ना (Co 86032)",
+      mr: "ऊस (को ८६०३२ - एफआरपी दर)",
+      ur: "گنا"
+    },
+    variety: "Co 86032",
+    category: "cash",
+    isCultivatedOnFarm: false,
+    mandi: "Malegaon SSK (Baramati)",
+    mandiDistrict: "Pune",
+    distanceKm: 4.2,
+    modalPrice: 3150,
+    minPrice: 3150,
+    maxPrice: 3250,
+    unit: "₹/Tonne",
+    dayChange: 0,
+    percentChange: 0.0,
+    arrivalsToday: 12400,
+    trend: "stable",
+    marketCondition: "Peak Crushing Season (Cooperative Mill)",
+    insight: "Statutory Fair & Remunerative Price (FRP) with early-delivery premium active at local sugar mills.",
+    insightMr: "बारामती परिसरातील साखर कारखान्यांचा गळीत हंगाम सुरू. थेट तोडणी व वाहतूक करार उपलब्ध.",
+    crossMandi: [
+      { name: "Someshwar SSK", price: 3180, diff: 30 },
+      { name: "Chhatrapati SSK", price: 3150, diff: 0 }
+    ]
+  },
+  {
+    id: "mandi-grapes",
+    cropName: "Grapes",
+    cropNameLocal: {
+      en: "Export Grapes (Thompson)",
+      hi: "अंगूर (थॉम्पसन सीडलेस)",
+      mr: "द्राक्ष (थॉमसन सीडलेस)",
+      ur: "انگور"
+    },
+    variety: "Thompson Seedless",
+    category: "fruit",
+    isCultivatedOnFarm: false,
+    mandi: "Sangli / Tasgaon APMC",
+    mandiDistrict: "Sangli",
+    distanceKm: 135.0,
+    modalPrice: 6800,
+    minPrice: 5500,
+    maxPrice: 7500,
+    unit: "₹/Quintal",
+    dayChange: 250,
+    percentChange: 3.82,
+    arrivalsToday: 880,
+    trend: "up",
+    marketCondition: "Strong Gulf & Domestic Metro Demand",
+    insight: "High brix sweetness index fetching 15% premium. Cold-chain aggregation centers operating full capacity.",
+    insightMr: "खाडी देशांतील निर्यातीसाठी उत्तम मागणी. योग्य गोडी व आकाराच्या घडांना वाढीव दर.",
+    crossMandi: [
+      { name: "Nashik APMC", price: 6650, diff: -150 },
+      { name: "Pune APMC", price: 6900, diff: 100 }
+    ]
+  },
+  {
+    id: "mandi-pomegranate",
+    cropName: "Pomegranate",
+    cropNameLocal: {
+      en: "Pomegranate (Bhagwa)",
+      hi: "अनार (भगवा ए-ग्रेड)",
+      mr: "डाळिंब (भगवा ग्रेड-ए)",
+      ur: "انار"
+    },
+    variety: "Bhagwa Grade-A",
+    category: "fruit",
+    isCultivatedOnFarm: false,
+    mandi: "Solapur APMC",
+    mandiDistrict: "Solapur",
+    distanceKm: 110.0,
+    modalPrice: 11200,
+    minPrice: 9500,
+    maxPrice: 13500,
+    unit: "₹/Quintal",
+    dayChange: 400,
+    percentChange: 3.7,
+    arrivalsToday: 410,
+    trend: "up",
+    marketCondition: "Tight Supply & Premium Export Orders",
+    insight: "Solapur hub witnessing low arrivals of pristine Bhagwa. Grade-A fruit touching season high.",
+    insightMr: "सोलापूर बाजारात दर्जेदार भगवा डाळिंबाची मर्यादित आवक. मोठ्या आकाराच्या डाळिंबाला उच्च दर.",
+    crossMandi: [
+      { name: "Baramati APMC", price: 10900, diff: -300 },
+      { name: "Pune Market Yard", price: 11500, diff: 300 }
+    ]
+  },
+  {
+    id: "mandi-tomato",
+    cropName: "Tomato",
+    cropNameLocal: {
+      en: "Tomato (Hybrid)",
+      hi: "टमाटर (हाइब्रिड)",
+      mr: "टोमॅटो (हायब्रिड अभिनव)",
+      ur: "ٹماٹر"
+    },
+    variety: "Abhinav Hybrid",
+    category: "vegetable",
+    isCultivatedOnFarm: false,
+    mandi: "Narayangaon APMC",
+    mandiDistrict: "Pune",
+    distanceKm: 120.0,
+    modalPrice: 1650,
+    minPrice: 1200,
+    maxPrice: 2100,
+    unit: "₹/Quintal",
+    dayChange: -120,
+    percentChange: -6.78,
+    arrivalsToday: 5200,
+    trend: "down",
+    marketCondition: "Heavy Flush Arrivals",
+    insight: "Bumper harvest influx from Junnar and Otur. Holding or direct-to-processing unit supply recommended.",
+    insightMr: "जुन्नर व ओतूर भागातून मोठी आवक सुरू असल्याने तात्पुरती घसरण. प्रक्रिया उद्योगांना पुरवठा फायदेशीर.",
+    crossMandi: [
+      { name: "Pune Market Yard", price: 1750, diff: 100 },
+      { name: "Baramati APMC", price: 1600, diff: -50 }
+    ]
+  },
+  {
+    id: "mandi-chana",
+    cropName: "Bengal Gram (Chana)",
+    cropNameLocal: {
+      en: "Gram / Chana (Vijay)",
+      hi: "चना / दाल (विजय)",
+      mr: "हरभरा / चना (विजय जात)",
+      ur: "چنا"
+    },
+    variety: "Vijay",
+    category: "oilseed",
+    isCultivatedOnFarm: false,
+    mandi: "Latur APMC",
+    mandiDistrict: "Latur",
+    distanceKm: 180.0,
+    modalPrice: 5950,
+    minPrice: 5600,
+    maxPrice: 6200,
+    unit: "₹/Quintal",
+    dayChange: 75,
+    percentChange: 1.28,
+    arrivalsToday: 1180,
+    trend: "up",
+    marketCondition: "Procurement Bids Above MSP",
+    insight: "Government MSP buffer procurement and festive pulse consumption driving steady market strength.",
+    insightMr: "शासकीय हमीभावापेक्षा जास्त दराने खरेदी सुरू. डाळ गिरण्यांकडून जोरदार मागणी.",
+    crossMandi: [
+      { name: "Baramati APMC", price: 5880, diff: -70 },
+      { name: "Solapur APMC", price: 5920, diff: -30 }
+    ]
+  }
+]
 
 const mockEquipment = [
   {
@@ -230,7 +547,9 @@ function EquipmentCalendar({ bookedDates, selectedDate, onSelect }: { bookedDate
 export default function MarketPage({ language, user }: MarketPageProps) {
   const t = translations[language] || translations.en
   const [equipment, setEquipment] = useState(mockEquipment)
-  const [activeTab, setActiveTab] = useState<"rent" | "my_listings">("rent")
+  const [activeTab, setActiveTab] = useState<"mandi" | "rent" | "my_listings">("mandi")
+  const [mandiFilter, setMandiFilter] = useState<string>("all")
+  const [mandiSearch, setMandiSearch] = useState<string>("")
   const [showAddForm, setShowAddForm] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedEquipment, setSelectedEquipment] = useState<any | null>(null)
@@ -382,27 +701,368 @@ export default function MarketPage({ language, user }: MarketPageProps) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Toggle Tabs */}
-        <div className="flex justify-center mb-10">
-          <div className="inline-flex bg-white shadow-md p-1.5 rounded-full border border-border">
+        {/* Enhanced Toggle Tabs (Mandi + Rent + Listings) */}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex bg-white shadow-md p-1.5 rounded-full border border-border flex-wrap justify-center gap-1">
+            <button
+              onClick={() => setActiveTab("mandi")}
+              className={`px-6 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all duration-300 flex items-center gap-2 ${
+                activeTab === "mandi" 
+                  ? "bg-[#087A4B] text-white shadow-lg shadow-[#087A4B]/20" 
+                  : "text-muted-foreground hover:bg-muted"
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{language === "mr" ? "थेट APMC बाजार भाव" : language === "hi" ? "लाइव मंडी भाव" : "Live Mandi Rates (Ongoing Yields)"}</span>
+            </button>
             <button
               onClick={() => setActiveTab("rent")}
-              className={`px-8 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
+              className={`px-6 py-2.5 rounded-full font-semibold text-xs sm:text-sm transition-all duration-300 flex items-center gap-1.5 ${
                 activeTab === "rent" ? "bg-primary text-white shadow-lg" : "text-muted-foreground hover:bg-muted"
               }`}
             >
-              {t.rentEquipment}
+              <Tractor className="w-4 h-4" />
+              <span>{t.rentEquipment}</span>
             </button>
             <button
               onClick={() => setActiveTab("my_listings")}
-              className={`px-8 py-3 rounded-full font-semibold text-sm transition-all duration-300 ${
+              className={`px-6 py-2.5 rounded-full font-semibold text-xs sm:text-sm transition-all duration-300 flex items-center gap-1.5 ${
                 activeTab === "my_listings" ? "bg-accent text-white shadow-lg" : "text-muted-foreground hover:bg-muted"
               }`}
             >
-              My Listings
+              <span>My Listings</span>
             </button>
           </div>
         </div>
+
+        {/* LIVE MANDI RATES FOR ONGOING YIELDS TAB */}
+        {activeTab === "mandi" && (
+          <div className="animate-fade-in-up space-y-8">
+            {/* ONGOING FARM YIELDS CALLOUT (SOYBEAN & ONION) */}
+            <div className="p-6 rounded-3xl bg-gradient-to-br from-[#EAF6ED] via-[#F4FAF5] to-white border border-[#087A4B]/20 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-[#087A4B]/15 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-[#087A4B] text-white flex items-center justify-center shrink-0 shadow-md">
+                    <Sprout className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-lg font-extrabold text-[#073B2A] font-heading">
+                        {language === "mr" ? "आपल्या शेतातील चालू पिकांचे बाजार भाव" : language === "hi" ? "आपके खेत की वर्तमान फसलों के लाइव भाव" : "Live Market Rates: Your Farm's Ongoing Yields"}
+                      </h2>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#087A4B] text-white">
+                        Baramati Hub
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#25352C] mt-0.5">
+                      {language === "mr" 
+                        ? "प्लॉट १ (सोयाबीन) आणि प्लॉट २ (कांदा) साठी बारामती व लगतच्या बाजार समित्यांमधील थेट दर." 
+                        : "Real-time APMC trade realization for Plot 1 (Soybean) and Plot 2 (Onion) with adjacent mandi spreads."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0 text-xs">
+                  <span className="px-3 py-1 rounded-xl bg-white border border-[#E5EBE5] text-[#25352C] font-semibold flex items-center gap-1.5 shadow-xs">
+                    <Clock className="w-3.5 h-3.5 text-[#087A4B]" />
+                    <span>Updated 28 mins ago</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Two Highlight Cards for Ongoing Crops */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {liveMandiRates.filter(r => r.isCultivatedOnFarm).map((crop) => (
+                  <div
+                    key={crop.id}
+                    className="p-5 rounded-2xl bg-white border-2 border-[#087A4B]/30 shadow-md hover:shadow-lg transition-all space-y-4"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#DDF3E6] text-[#073B2A] border border-[#087A4B]/30 uppercase tracking-wide">
+                            {crop.plotAssociation}
+                          </span>
+                          <span className="text-[11px] font-semibold text-[#68766C]">
+                            Variety: <b className="text-[#25352C]">{crop.variety}</b>
+                          </span>
+                        </div>
+                        <h3 className="text-xl font-extrabold text-[#25352C] mt-1.5 font-heading">
+                          {crop.cropNameLocal[language] || crop.cropName}
+                        </h3>
+                      </div>
+
+                      <div className="text-right">
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-extrabold ${
+                          crop.dayChange >= 0 
+                            ? "bg-[#DDF3E6] text-[#087A4B] border border-[#087A4B]/20" 
+                            : "bg-red-50 text-red-600 border border-red-200"
+                        }`}>
+                          {crop.dayChange >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                          {crop.dayChange >= 0 ? `+₹${crop.dayChange}` : `-₹${Math.abs(crop.dayChange)}`} ({crop.percentChange}%)
+                        </span>
+                        <span className="block text-[10px] text-[#68766C] mt-0.5">vs yesterday</span>
+                      </div>
+                    </div>
+
+                    {/* Price and Mandi Details */}
+                    <div className="p-4 rounded-xl bg-[#F5F7F3] border border-[#E5EBE5] flex items-center justify-between">
+                      <div>
+                        <span className="text-[11px] font-bold text-[#68766C] uppercase tracking-wider block">
+                          Modal Price ({crop.mandi})
+                        </span>
+                        <div className="flex items-baseline gap-1 mt-0.5">
+                          <span className="text-3xl font-extrabold text-[#087A4B] font-mono">
+                            ₹{crop.modalPrice.toLocaleString()}
+                          </span>
+                          <span className="text-xs font-semibold text-[#68766C]">/ {crop.unit.replace("₹/", "")}</span>
+                        </div>
+                      </div>
+
+                      <div className="text-right text-xs space-y-1">
+                        <div>
+                          <span className="text-[#68766C]">Min - Max: </span>
+                          <span className="font-bold text-[#25352C] font-mono">₹{crop.minPrice} - ₹{crop.maxPrice}</span>
+                        </div>
+                        <div>
+                          <span className="text-[#68766C]">Daily Arrivals: </span>
+                          <span className="font-bold text-[#073B2A]">{crop.arrivalsToday.toLocaleString()} Qtl</span>
+                        </div>
+                        <div className="text-[11px] text-[#68766C] flex items-center justify-end gap-1">
+                          <MapPin className="w-3 h-3 text-[#087A4B]" />
+                          <span>{crop.distanceKm} km from farm</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Market Opportunity Insight */}
+                    <div className="p-3 rounded-xl bg-[#FFF9E6] border border-[#E6A23C]/30 text-xs text-[#8A5A00] flex items-start gap-2">
+                      <Sparkles className="w-4 h-4 text-[#E6A23C] shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-bold block">
+                          {language === "mr" ? "बाजार विश्लेषण व विक्री सल्ला:" : "Botanical Trade Opportunity:"}
+                        </span>
+                        <span className="text-[#664200]">
+                          {language === "mr" ? crop.insightMr : crop.insight}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Cross-Mandi Price Comparison Strip */}
+                    <div className="border-t border-[#E5EBE5] pt-3">
+                      <span className="text-[11px] font-bold text-[#68766C] uppercase tracking-wider block mb-2">
+                        Neighboring Mandi Comparison
+                      </span>
+                      <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                        {crop.crossMandi.map((cm, idx) => (
+                          <div key={idx} className="p-2 rounded-lg bg-white border border-[#E5EBE5]">
+                            <span className="text-[10px] text-[#68766C] block truncate">{cm.name}</span>
+                            <span className="font-bold text-[#25352C] font-mono text-xs block mt-0.5">₹{cm.price}</span>
+                            <span className={`text-[10px] font-bold ${cm.diff >= 0 ? "text-[#087A4B]" : "text-red-500"}`}>
+                              {cm.diff >= 0 ? `+₹${cm.diff}` : `-₹${Math.abs(cm.diff)}`}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ALL MAHARASHTRA APMC MANDIS DIRECTORY */}
+            <div className="space-y-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-extrabold text-[#25352C] font-heading">
+                    {language === "mr" ? "सर्व कृषी उत्पन्न बाजार समित्या (APMC)" : language === "hi" ? "सभी कृषि मंडी भाव (APMC)" : "Regional APMC Mandi Rate Directory"}
+                  </h3>
+                  <p className="text-xs text-[#68766C] mt-0.5">
+                    Live daily prices for pulses, cash crops, cereals and vegetables across western Maharashtra.
+                  </p>
+                </div>
+
+                {/* Search Bar for Mandis */}
+                <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-2xl border border-[#E5EBE5] shadow-xs max-w-sm w-full">
+                  <Search className="w-4 h-4 text-[#68766C]" />
+                  <input
+                    type="text"
+                    placeholder="Search crop or mandi..."
+                    value={mandiSearch}
+                    onChange={(e) => setMandiSearch(e.target.value)}
+                    className="w-full text-xs outline-none bg-transparent text-[#25352C]"
+                  />
+                  {mandiSearch && (
+                    <button onClick={() => setMandiSearch("")} className="text-[#68766C] hover:text-[#25352C]">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Filter Pills */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                {[
+                  { id: "all", label: "All Crops" },
+                  { id: "ongoing", label: "My Farm Yields (Soybean & Onion)" },
+                  { id: "oilseed", label: "Oilseeds & Pulses" },
+                  { id: "vegetable", label: "Vegetables" },
+                  { id: "fruit", label: "Fruits" },
+                  { id: "cereal", label: "Cereals" },
+                  { id: "cash", label: "Cash Crops" },
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => setMandiFilter(f.id)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                      mandiFilter === f.id
+                        ? "bg-[#087A4B] text-white shadow-sm"
+                        : "bg-white text-[#68766C] border border-[#E5EBE5] hover:bg-[#F5F7F3]"
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Mandi Rates Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {liveMandiRates
+                  .filter((crop) => {
+                    const matchesCategory =
+                      mandiFilter === "all" ||
+                      (mandiFilter === "ongoing" && crop.isCultivatedOnFarm) ||
+                      crop.category === mandiFilter
+                    const matchesSearch =
+                      !mandiSearch ||
+                      crop.cropName.toLowerCase().includes(mandiSearch.toLowerCase()) ||
+                      crop.mandi.toLowerCase().includes(mandiSearch.toLowerCase()) ||
+                      crop.variety.toLowerCase().includes(mandiSearch.toLowerCase())
+                    return matchesCategory && matchesSearch
+                  })
+                  .map((crop) => (
+                    <div
+                      key={crop.id}
+                      className={`p-5 rounded-3xl bg-white border transition-all hover:shadow-lg flex flex-col justify-between ${
+                        crop.isCultivatedOnFarm
+                          ? "border-[#087A4B]/40 shadow-sm"
+                          : "border-[#E5EBE5] shadow-xs"
+                      }`}
+                    >
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            {crop.isCultivatedOnFarm ? (
+                              <span className="inline-block px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-[#DDF3E6] text-[#073B2A] uppercase mb-1">
+                                Cultivated on Farm
+                              </span>
+                            ) : (
+                              <span className="inline-block px-2 py-0.5 rounded-md text-[9px] font-bold bg-[#F5F7F3] text-[#68766C] uppercase mb-1">
+                                {crop.category}
+                              </span>
+                            )}
+                            <h4 className="text-base font-bold text-[#25352C]">
+                              {crop.cropNameLocal[language] || crop.cropName}
+                            </h4>
+                            <span className="text-[11px] text-[#68766C]">
+                              Variety: <b className="text-[#25352C]">{crop.variety}</b>
+                            </span>
+                          </div>
+
+                          <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[11px] font-extrabold ${
+                            crop.dayChange >= 0
+                              ? "bg-[#DDF3E6] text-[#087A4B]"
+                              : "bg-red-50 text-red-600"
+                          }`}>
+                            {crop.dayChange >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                            {crop.dayChange >= 0 ? `+₹${crop.dayChange}` : `-₹${Math.abs(crop.dayChange)}`}
+                          </span>
+                        </div>
+
+                        {/* Modal Price Big Display */}
+                        <div className="p-3 rounded-2xl bg-[#F5F7F3] border border-[#E5EBE5] flex items-center justify-between">
+                          <div>
+                            <span className="text-[10px] text-[#68766C] uppercase font-bold block">
+                              Modal Rate
+                            </span>
+                            <div className="flex items-baseline gap-1 mt-0.5">
+                              <span className="text-2xl font-extrabold text-[#087A4B] font-mono">
+                                ₹{crop.modalPrice.toLocaleString()}
+                              </span>
+                              <span className="text-[11px] text-[#68766C]">/ {crop.unit.replace("₹/", "")}</span>
+                            </div>
+                          </div>
+
+                          <div className="text-right text-[11px] space-y-0.5">
+                            <span className="block text-[#68766C]">Range</span>
+                            <span className="font-bold text-[#25352C] font-mono">₹{crop.minPrice} - ₹{crop.maxPrice}</span>
+                          </div>
+                        </div>
+
+                        {/* Mandi Location & Arrivals */}
+                        <div className="space-y-1 text-xs">
+                          <div className="flex justify-between items-center text-[#68766C]">
+                            <span className="flex items-center gap-1">
+                              <MapPin className="w-3.5 h-3.5 text-[#087A4B]" />
+                              <b>{crop.mandi}</b>
+                            </span>
+                            <span>{crop.distanceKm} km away</span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-[#68766C] pt-1">
+                            <span>Today Arrivals:</span>
+                            <span className="font-bold text-[#25352C]">{crop.arrivalsToday.toLocaleString()} {crop.unit.includes("Tonne") ? "Tonnes" : "Qtl"}</span>
+                          </div>
+                        </div>
+
+                        {/* Market Sentiment */}
+                        <p className="text-[11px] text-[#68766C] italic bg-white p-2 rounded-xl border border-[#E5EBE5]">
+                          &ldquo;{language === "mr" ? crop.insightMr : crop.insight}&rdquo;
+                        </p>
+                      </div>
+
+                      {/* Card Footer Action */}
+                      <div className="pt-3 mt-3 border-t border-[#E5EBE5] flex items-center justify-between">
+                        <span className="text-[10px] font-bold text-[#087A4B] uppercase tracking-wide">
+                          {crop.marketCondition}
+                        </span>
+                        <button
+                          onClick={() => setActiveTab("rent")}
+                          className="text-xs text-[#087A4B] hover:text-[#06633D] font-bold flex items-center gap-1"
+                        >
+                          <span>Rent Tools</span> &rarr;
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* CROSS-LINK TO EQUIPMENT MARKETPLACE BANNER */}
+            <div className="p-6 rounded-3xl bg-gradient-to-r from-[#073B2A] to-[#0B5C38] text-white flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/20">
+                  <Tractor className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-extrabold font-heading">
+                    {language === "mr" ? "कापणीसाठी ट्रॅक्टर किंवा ड्रोन भाड्याने हवे आहे का?" : "Preparing for Soybean or Onion Harvest?"}
+                  </h4>
+                  <p className="text-xs text-white/80 mt-0.5">
+                    Rent verified tractors, harvesters, rotavators, and spray drones from nearby progressive farmers.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setActiveTab("rent")}
+                className="px-6 py-3 rounded-full bg-white hover:bg-white/90 text-[#073B2A] text-xs font-bold transition-all shadow-md shrink-0 cursor-pointer"
+              >
+                Browse Equipment for Rent &rarr;
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* RENT EQUIPMENT TAB */}
         {activeTab === "rent" && (

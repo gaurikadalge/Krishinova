@@ -6,6 +6,7 @@ import LanguageModal from "@/components/language-modal"
 import Header from "@/components/layout/header"
 import AuthPages from "@/components/auth-pages"
 import MainApp from "@/components/main-app"
+import GlobalAIAssistant from "@/components/chatbot/global-ai-assistant"
 
 // Public Presentation Pages
 import HomePage from "@/components/pages/home-page"
@@ -134,6 +135,7 @@ export default function Home() {
     <LanguageProvider>
       <LanguageModal />
       <AppContent />
+      <GlobalAIAssistant />
     </LanguageProvider>
   )
 }

@@ -38,15 +38,16 @@ export default function MyFarmView({
       acres: 2.5,
       crop: "Soybean",
       variety: "JS 335",
-      stage: language === "mr" ? "मध्यम वाढ" : language === "hi" ? "मध्यम वृद्धि" : "Mid-season",
-      sowingDate: "15 Jul 2026",
+      stage: language === "mr" ? "मध्यम वाढ (शेंगा धरणे)" : language === "hi" ? "मध्यम वृद्धि (फली विकास)" : "Mid-season (Pod Formation)",
+      sowingDate: "25 Jun 2026",
       irrigation: d.drip,
-      soilType: language === "mr" ? "काळी कसदार माती" : language === "hi" ? "काली कपास मिट्टी" : "Black Cotton Soil",
-      ph: 7.2,
-      organicCarbon: "0.62%",
+      soilType: language === "mr" ? "काळी कसदार माती" : language === "hi" ? "काली कपास मिट्टी" : "Medium Deep Black (Vertisol)",
+      ph: 7.4,
+      organicCarbon: "0.58%",
       soilMoisture: language === "mr" ? "मध्यम" : language === "hi" ? "मध्यम" : "Medium",
-      aerialImg: "/Land.jpeg",
+      aerialImg: "/crops/soybean-plot.jpg",
       ndviScore: 0.68,
+      provenance: "Lab Tested (KVK Baramati)"
     },
     {
       id: "plot-2",
@@ -54,15 +55,33 @@ export default function MyFarmView({
       acres: 2.0,
       crop: "Onion",
       variety: "Bhima Super",
-      stage: language === "mr" ? "कंद विकास" : language === "hi" ? "कंद विकास" : "Development",
-      sowingDate: "25 Sep 2026",
+      stage: language === "mr" ? "शाकीय वाढ" : language === "hi" ? "वानस्पतिक विकास" : "Development (Vegetative)",
+      sowingDate: "10 Aug 2026",
       irrigation: d.sprinkler,
-      soilType: language === "mr" ? "गाळाची चिकणमाती" : language === "hi" ? "दोमट मिट्टी" : "Loamy Soil",
-      ph: 6.8,
-      organicCarbon: "0.51%",
+      soilType: language === "mr" ? "गाळाची चिकणमाती" : language === "hi" ? "दोमट मिट्टी" : "Clay Loam",
+      ph: 7.1,
+      organicCarbon: "0.52%",
       soilMoisture: language === "mr" ? "उच्च" : language === "hi" ? "उच्च" : "High",
-      aerialImg: "/crop.jpeg",
+      aerialImg: "/crops/onion-plot.jpg",
       ndviScore: 0.46,
+      provenance: "Lab Tested (KVK Baramati)"
+    },
+    {
+      id: "plot-3",
+      name: language === "mr" ? "घर परिसर व पडीक बफर" : "Homestead & Fallow Buffer",
+      acres: 0.7,
+      crop: "Fallow / Agroforestry Buffer",
+      variety: "Desi Neem & Grass",
+      stage: language === "mr" ? "उशिराचा टप्पा" : "Late-season (Border)",
+      sowingDate: "15 May 2026",
+      irrigation: language === "mr" ? "पाटपाणी/बफर" : "Furrow Buffer",
+      soilType: language === "mr" ? "मुरुमाड जमीन" : "Gravelly Loam",
+      ph: 7.6,
+      organicCarbon: "0.42%",
+      soilMoisture: language === "mr" ? "कमी" : "Low",
+      aerialImg: "/crops/agroforestry-buffer.jpg",
+      ndviScore: 0.32,
+      provenance: "Regional Assumption"
     },
   ]
 
@@ -93,14 +112,14 @@ export default function MyFarmView({
           {/* Farm Photo Banner */}
           <div className="lg:col-span-4 relative h-36 rounded-2xl overflow-hidden border border-[#E5EBE5] shadow-inner group">
             <img
-              src="/Land.jpeg"
+              src="/crops/soybean-plot.jpg"
               alt="Farm Aerial View"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
             <div className="absolute bottom-2.5 left-3 text-white text-xs font-semibold flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#16A36A] animate-pulse" />
-              Live Farm Plot Parcel
+              Live Farm Plot Parcel &bull; 5.2 Acres Total
             </div>
           </div>
 
@@ -115,21 +134,24 @@ export default function MyFarmView({
             </div>
 
             <p className="text-xs text-[#25352C] flex items-center gap-2">
-              <span className="font-semibold">👤 {d.farmerName}</span> &bull;{" "}
+              <span className="font-semibold">{d.farmerName}</span> &bull;{" "}
               <span className="flex items-center gap-1 text-[#68766C]">
                 <MapPin className="w-3 h-3 text-[#087A4B]" />
                 {d.pilotLocation}, {d.pilotDistrict}
               </span>
             </p>
 
-            <div className="pt-1">
+            <div className="pt-1 flex items-center gap-2">
               <span className="text-[11px] px-3 py-1 rounded-md bg-[#FFF7E8] text-[#A86B12] border border-[#E6A23C]/30 font-semibold inline-block">
                 {d.pilotBadge}
+              </span>
+              <span className="text-[11px] px-2.5 py-1 rounded-md bg-[#DDF3E6] text-[#073B2A] border border-[#087A4B]/20 font-bold">
+                5.2 Acres Total
               </span>
             </div>
 
             <p className="text-[11px] text-[#68766C]">
-              📅 {d.lastTwinSynced}: <span className="text-[#25352C] font-mono font-semibold">2026-10-30 11:34:53</span>
+              📅 {d.lastTwinSynced}: <span className="text-[#25352C] font-mono font-semibold">2026-11-06 22:50:00</span>
             </p>
           </div>
 
@@ -143,13 +165,13 @@ export default function MyFarmView({
                 </div>
                 <div>
                   <span className="text-[11px] text-[#68766C] block font-semibold">{d.totalAvailableWater}</span>
-                  <span className="text-lg font-extrabold text-[#2878D0]">80K L</span>
+                  <span className="text-lg font-extrabold text-[#2878D0]">80,000 L</span>
                 </div>
               </div>
               <div className="w-full bg-[#E5EBE5] rounded-full h-2 overflow-hidden">
                 <div className="bg-[#2878D0] h-2 rounded-full w-[62%]" />
               </div>
-              <span className="text-[10px] text-[#68766C] mt-1.5 block font-medium">{d.plannedReqWater}</span>
+              <span className="text-[10px] text-[#68766C] mt-1.5 block font-medium">Pond: 65K L + Borewell: 15K L</span>
             </div>
 
             {/* Budget Gauge */}
@@ -166,7 +188,7 @@ export default function MyFarmView({
               <div className="w-full bg-[#E5EBE5] rounded-full h-2 overflow-hidden">
                 <div className="bg-[#E6A23C] h-2 rounded-full w-[41%]" />
               </div>
-              <span className="text-[10px] text-[#68766C] mt-1.5 block font-medium">{d.cultivationBudget}</span>
+              <span className="text-[10px] text-[#68766C] mt-1.5 block font-medium">Spent: ₹22,000 / ₹60,000</span>
             </div>
           </div>
         </div>
@@ -239,31 +261,30 @@ export default function MyFarmView({
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {plots.map((plot) => (
             <div
               key={plot.id}
-              className="rounded-3xl bg-white border border-[#E5EBE5] p-5 space-y-4 shadow-sm hover:shadow-md transition-shadow"
+              className="rounded-3xl bg-white border border-[#E5EBE5] p-5 space-y-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
             >
-              {/* Plot Header */}
-              <div className="flex justify-between items-center">
-                <div>
-                  <span className="text-[11px] font-bold text-[#073B2A] bg-[#DDF3E6] px-2.5 py-0.5 rounded-full border border-[#087A4B]/20">
-                    Plot #{plot.id === "plot-1" ? "1" : "2"} &bull; {plot.acres} Acres
-                  </span>
-                  <h4 className="text-base font-bold text-[#25352C] mt-1.5">{plot.name}</h4>
+              <div>
+                {/* Plot Header */}
+                <div className="flex justify-between items-center mb-3">
+                  <div>
+                    <span className="text-[11px] font-bold text-[#073B2A] bg-[#DDF3E6] px-2.5 py-0.5 rounded-full border border-[#087A4B]/20">
+                      {plot.id.toUpperCase()} &bull; {plot.acres} Acres
+                    </span>
+                    <h4 className="text-base font-bold text-[#25352C] mt-1.5">{plot.name}</h4>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#EBF3FC] text-[#2878D0] border border-[#2878D0]/20">
+                      {plot.irrigation}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#EBF3FC] text-[#2878D0] border border-[#2878D0]/20">
-                    💧 {plot.irrigation}
-                  </span>
-                </div>
-              </div>
 
-              {/* Cadastral Polygon & Metadata Split */}
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
                 {/* Aerial Boundary Image */}
-                <div className="sm:col-span-7 relative h-40 rounded-2xl overflow-hidden border border-[#E5EBE5] shadow-inner group">
+                <div className="relative h-36 rounded-2xl overflow-hidden border border-[#E5EBE5] shadow-inner group mb-3">
                   <img
                     src={plot.aerialImg}
                     alt={plot.name}
@@ -273,91 +294,63 @@ export default function MyFarmView({
                   <div className="absolute bottom-2 left-2 bg-black/75 backdrop-blur-md px-2 py-0.5 rounded text-[10px] text-white font-mono font-bold">
                     NDVI {plot.ndviScore.toFixed(2)}
                   </div>
+                  <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-2 py-0.5 rounded text-[9px] text-[#073B2A] font-bold">
+                    {plot.provenance}
+                  </div>
                 </div>
 
                 {/* Plot Agricultural Details */}
-                <div className="sm:col-span-5 space-y-2 text-xs">
-                  <div>
-                    <span className="text-[#68766C] block text-[11px] font-medium">{d.cropVariety}</span>
-                    <span className="font-bold text-[#25352C] flex items-center gap-1.5 mt-0.5">
-                      <Sprout className="w-3.5 h-3.5 text-[#087A4B]" />
-                      {plot.crop} ({plot.variety})
-                    </span>
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-[#68766C]">{d.cropVariety}:</span>
+                    <span className="font-bold text-[#25352C]">{plot.crop} ({plot.variety})</span>
                   </div>
-
-                  <div>
-                    <span className="text-[#68766C] block text-[11px] font-medium">{d.growthStage}</span>
-                    <span className="font-bold text-[#087A4B] flex items-center gap-1.5 mt-0.5">
-                      <Activity className="w-3.5 h-3.5 text-[#087A4B]" />
-                      {plot.stage}
-                    </span>
+                  <div className="flex justify-between">
+                    <span className="text-[#68766C]">{d.growthStage}:</span>
+                    <span className="font-bold text-[#087A4B]">{plot.stage}</span>
                   </div>
-
-                  <div>
-                    <span className="text-[#68766C] block text-[11px] font-medium">{d.sowingDate}</span>
-                    <span className="font-semibold text-[#25352C] flex items-center gap-1.5 mt-0.5">
-                      <Calendar className="w-3.5 h-3.5 text-[#68766C]" />
-                      {plot.sowingDate}
-                    </span>
+                  <div className="flex justify-between">
+                    <span className="text-[#68766C]">{d.sowingDate}:</span>
+                    <span className="font-semibold text-[#25352C]">{plot.sowingDate}</span>
                   </div>
+                </div>
 
-                  <div>
-                    <span className="text-[#68766C] block text-[11px] font-medium">{d.totalArea}</span>
-                    <span className="font-semibold text-[#25352C] flex items-center gap-1.5 mt-0.5">
-                      <Layers className="w-3.5 h-3.5 text-[#68766C]" />
-                      {plot.acres} Acres
-                    </span>
+                {/* Soil Chips */}
+                <div className="grid grid-cols-4 gap-1.5 pt-3 mt-3 border-t border-[#E5EBE5] text-center text-xs">
+                  <div className="p-1.5 bg-[#F5F7F3] rounded-xl border border-[#E5EBE5]">
+                    <span className="text-[#68766C] block text-[9px] font-medium">{d.soilType}</span>
+                    <span className="font-bold text-[#25352C] block text-[10px] truncate mt-0.5">{plot.soilType}</span>
+                  </div>
+                  <div className="p-1.5 bg-[#F5F7F3] rounded-xl border border-[#E5EBE5]">
+                    <span className="text-[#68766C] block text-[9px] font-medium">{d.phLevel}</span>
+                    <span className="font-extrabold text-[#087A4B] block text-[10px] mt-0.5">{plot.ph}</span>
+                  </div>
+                  <div className="p-1.5 bg-[#F5F7F3] rounded-xl border border-[#E5EBE5]">
+                    <span className="text-[#68766C] block text-[9px] font-medium">{d.organicCarbon}</span>
+                    <span className="font-bold text-[#25352C] block text-[10px] mt-0.5">{plot.organicCarbon}</span>
+                  </div>
+                  <div className="p-1.5 bg-[#F5F7F3] rounded-xl border border-[#E5EBE5]">
+                    <span className="text-[#68766C] block text-[9px] font-medium">{d.soilMoisture}</span>
+                    <span className="font-bold text-[#2878D0] block text-[10px] mt-0.5">{plot.soilMoisture}</span>
                   </div>
                 </div>
               </div>
 
-              {/* 4 Soil Chips */}
-              <div className="grid grid-cols-4 gap-2 pt-2 border-t border-[#E5EBE5] text-center text-xs">
-                <div className="p-2 bg-[#F5F7F3] rounded-xl border border-[#E5EBE5]">
-                  <span className="text-[#68766C] block text-[10px] font-medium">{d.soilType}</span>
-                  <span className="font-bold text-[#25352C] block text-[11px] truncate mt-0.5">{plot.soilType}</span>
-                </div>
-
-                <div className="p-2 bg-[#F5F7F3] rounded-xl border border-[#E5EBE5]">
-                  <span className="text-[#68766C] block text-[10px] font-medium">{d.phLevel}</span>
-                  <span className="font-extrabold text-[#087A4B] block text-[11px] mt-0.5">{plot.ph}</span>
-                </div>
-
-                <div className="p-2 bg-[#F5F7F3] rounded-xl border border-[#E5EBE5]">
-                  <span className="text-[#68766C] block text-[10px] font-medium">{d.organicCarbon}</span>
-                  <span className="font-bold text-[#25352C] block text-[11px] mt-0.5">{plot.organicCarbon}</span>
-                </div>
-
-                <div className="p-2 bg-[#F5F7F3] rounded-xl border border-[#E5EBE5]">
-                  <span className="text-[#68766C] block text-[10px] font-medium">{d.soilMoisture}</span>
-                  <span className="font-bold text-[#2878D0] block text-[11px] mt-0.5">{plot.soilMoisture}</span>
-                </div>
-              </div>
-
-              {/* 3 Action Buttons */}
-              <div className="grid grid-cols-3 gap-2 pt-1">
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#E5EBE5]">
                 <button
                   onClick={onNavigateToSatellite}
                   className="py-2 px-3 rounded-xl bg-[#DDF3E6] hover:bg-[#cbeed8] text-[#073B2A] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <Eye className="w-3.5 h-3.5 text-[#087A4B]" />
-                  {d.viewDetails} &rarr;
+                  <span>{d.viewDetails}</span>
                 </button>
-
-                <button
-                  onClick={onNavigateToSatellite}
-                  className="py-2 px-3 rounded-xl bg-[#F5F7F3] hover:bg-[#eef3ee] text-[#25352C] font-semibold text-xs flex items-center justify-center gap-1.5 border border-[#E5EBE5] transition-colors"
-                >
-                  <Layers className="w-3.5 h-3.5 text-[#087A4B]" />
-                  {d.satelliteView}
-                </button>
-
                 <button
                   onClick={onOpenPlotModal}
                   className="py-2 px-3 rounded-xl bg-[#F5F7F3] hover:bg-[#eef3ee] text-[#25352C] font-semibold text-xs flex items-center justify-center gap-1.5 border border-[#E5EBE5] transition-colors"
                 >
                   <Edit3 className="w-3.5 h-3.5 text-[#68766C]" />
-                  {d.editPlot}
+                  <span>{d.editPlot}</span>
                 </button>
               </div>
             </div>

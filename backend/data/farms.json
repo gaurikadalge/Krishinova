@@ -10,7 +10,7 @@
     "village": "Malegaon Khurd",
     "latitude": 18.1512,
     "longitude": 74.5824,
-    "total_area_acres": 4.5,
+    "total_area_acres": 5.2,
     "plots": [
       {
         "id": "plot-1",
@@ -51,22 +51,22 @@
         }
       },
       {
-        "id": "plot-1793353545739",
-        "name": "Kharif Block",
-        "area_acres": 3.0,
-        "current_crop": "Wheat",
-        "variety": "JS 335",
-        "sowing_date": "2026-07-01",
-        "growth_stage": "development",
-        "irrigation_method": "drip",
+        "id": "plot-3",
+        "name": "Homestead & Fallow Buffer",
+        "area_acres": 0.7,
+        "current_crop": "Fallow / Agroforestry Buffer",
+        "variety": "Desi Neem & Grass",
+        "sowing_date": "2026-05-15",
+        "growth_stage": "late_season",
+        "irrigation_method": "furrow",
         "soil": {
-          "soil_type": "Clay Loam",
-          "ph": 7.2,
-          "nitrogen": 180.0,
-          "phosphorus": 22.0,
-          "potassium": 240.0,
-          "organic_carbon_pct": 0.55,
-          "is_measured": true
+          "soil_type": "Gravelly Loam",
+          "ph": 7.6,
+          "nitrogen": 140.0,
+          "phosphorus": 14.0,
+          "potassium": 190.0,
+          "organic_carbon_pct": 0.42,
+          "is_measured": false
         }
       }
     ],
@@ -91,6 +91,6 @@
       "spent_inr": 22000.0,
       "remaining_inr": 38000.0
     },
-    "last_updated": "2026-10-30 15:15:45"
+    "last_updated": "2026-11-06 22:50:00"
   }
 ]

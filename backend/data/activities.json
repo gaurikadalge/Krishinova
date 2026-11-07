@@ -1,0 +1,26 @@
+[
+  {
+    "id": "act-1",
+    "farm_id": "farm-mh-001",
+    "plot_id": "plot-1",
+    "operation": "Drip Irrigation Pulse Cycle",
+    "status": "completed",
+    "water_used_liters": 12000.0,
+    "cost_inr": 450.0,
+    "date": "2026-11-01",
+    "notes": "Morning drip cycle applied between 06:00 and 07:30 to avoid midday evaporation.",
+    "recorded_at": "2026-11-01 07:45:00"
+  },
+  {
+    "id": "act-2",
+    "farm_id": "farm-mh-001",
+    "plot_id": "plot-1",
+    "operation": "Organic Mulch Layering",
+    "status": "completed",
+    "water_used_liters": 0.0,
+    "cost_inr": 1800.0,
+    "date": "2026-11-03",
+    "notes": "Spread soybean straw mulch along drip lines to retain 25% soil moisture.",
+    "recorded_at": "2026-11-03 16:30:00"
+  }
+]

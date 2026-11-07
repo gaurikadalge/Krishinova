@@ -20,7 +20,7 @@ import {
   X,
   LogOut,
   Home,
-
+  Sprout,
 } from "lucide-react"
 import type { Language } from "../language-context"
 import { dictionary } from "../translations"
@@ -51,12 +51,12 @@ export default function AppSidebarLayout({
 
   const navItems = [
     { id: "dashboard", label: d.dashboard, icon: LayoutDashboard },
-    { id: "my-farm", label: d.myFarm, icon: Map },
-    { id: "satellite", label: d.satelliteInsights, icon: Satellite },
-    { id: "weather", label: d.weatherClimate, icon: CloudSun },
-    { id: "news", label: d.newsAlerts, icon: Newspaper },
+    { id: "crop-demand", label: d.cropPlanDemand || "Crop Plan & Demand", icon: Sprout },
+    { id: "weather", label: d.climateRisk || d.weatherClimate, icon: CloudSun },
+    { id: "my-farm", label: d.farmResources || d.myFarm, icon: Map },
     { id: "twin", label: d.digitalTwin, icon: Cpu },
-    { id: "recommendations", label: d.recommendations, icon: Sparkles },
+    { id: "recommendations", label: d.activityLog || d.recommendations, icon: Sparkles },
+    { id: "satellite", label: d.satelliteInsights, icon: Satellite },
     { id: "market", label: d.marketInsights, icon: TrendingUp },
     { id: "assistant", label: d.aiAssistant, icon: MessageSquare },
   ]
@@ -64,7 +64,7 @@ export default function AppSidebarLayout({
   return (
     <div className="min-h-screen bg-[#F5F7F3] text-[#25352C] flex">
       {/* SIDEBAR (Botanical Forest Green: #073B2A) */}
-      <aside className="hidden lg:flex w-64 bg-[#073B2A] text-white flex-col justify-between shrink-0 fixed inset-y-0 left-0 z-40 shadow-xl">
+      <aside className="hidden lg:flex w-64 bg-[#073B2A] text-white flex-col justify-between shrink-0 fixed inset-y-0 left-0 z-40 shadow-xl overflow-y-auto">
         <div>
           {/* Brand Logo Header */}
           <div className="p-6 border-b border-[#10543C] flex items-center gap-3">
@@ -90,14 +90,14 @@ export default function AppSidebarLayout({
                 <button
                   key={item.id}
                   onClick={() => onNavigate(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
                     active
-                      ? "bg-[#DDF3E6] text-[#073B2A] shadow-md shadow-black/10"
+                      ? "bg-[#DDF3E6] text-[#073B2A] shadow-md shadow-black/10 font-bold"
                       : "text-[#DDF3E6]/85 hover:text-white hover:bg-[#10543C]"
                   }`}
                 >
-                  <Icon className={`w-5 h-5 ${active ? "text-[#073B2A]" : "text-[#16A36A]"}`} />
-                  <span>{item.label}</span>
+                  <Icon className={`w-4 h-4 ${active ? "text-[#073B2A]" : "text-[#16A36A]"}`} />
+                  <span className="truncate">{item.label}</span>
                 </button>
               )
             })}
@@ -133,38 +133,54 @@ export default function AppSidebarLayout({
 
       {/* MOBILE DRAWER */}
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex">
-          <div className="w-72 bg-[#073B2A] text-white h-full p-4 pt-20 space-y-1 shadow-2xl">
-            {navItems.map((item) => {
-              const Icon = item.icon
-              const active = currentPage === item.id
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    onNavigate(item.id)
-                    setMobileOpen(false)
-                  }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold ${
-                    active ? "bg-[#DDF3E6] text-[#073B2A]" : "text-[#DDF3E6]/80 hover:bg-[#10543C]"
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span>{item.label}</span>
-                </button>
-              )
-            })}
+        <div className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-xs flex">
+          <div className="w-72 bg-[#073B2A] text-white h-full p-4 flex flex-col justify-between overflow-y-auto">
+            <div className="space-y-4 pt-16">
+              <nav className="space-y-1">
+                {navItems.map((item) => {
+                  const Icon = item.icon
+                  const active = currentPage === item.id
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        onNavigate(item.id)
+                        setMobileOpen(false)
+                      }}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                        active
+                          ? "bg-[#DDF3E6] text-[#073B2A]"
+                          : "text-[#DDF3E6]/85 hover:text-white hover:bg-[#10543C]"
+                      }`}
+                    >
+                      <Icon className={`w-5 h-5 ${active ? "text-[#073B2A]" : "text-[#16A36A]"}`} />
+                      <span>{item.label}</span>
+                    </button>
+                  )
+                })}
+              </nav>
+            </div>
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="w-full flex items-center gap-2 p-3 text-red-300 hover:text-white hover:bg-red-950/40 rounded-xl text-sm font-semibold mt-4"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
+              </button>
+            )}
           </div>
+          <div className="flex-1" onClick={() => setMobileOpen(false)} />
         </div>
       )}
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 lg:pl-64 flex flex-col min-h-screen">
-        {/* TOP TOPBAR */}
-        <header className="h-20 bg-white/95 backdrop-blur-md border-b border-[#E5EBE5] px-6 sm:px-8 flex items-center justify-between gap-4 sticky top-0 z-30 shadow-sm">
-          {/* Search Bar */}
-          <div className="relative max-w-md w-full hidden sm:block">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#89958C]" />
+      <div className="flex-1 lg:pl-64 flex flex-col min-w-0">
+        {/* TOPBAR */}
+        <header className="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur-md border-b border-[#E5EBE5] px-4 sm:px-6 flex items-center justify-between gap-4">
+          {/* Global Search Bar */}
+          <div className="hidden sm:flex items-center flex-1 max-w-md relative">
+            <Search className="w-4 h-4 text-[#89958C] absolute left-3.5" />
             <input
               type="text"
               placeholder={d.searchPlaceholder}
@@ -177,7 +193,7 @@ export default function AppSidebarLayout({
             {/* Location Pill */}
             <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5F7F3] border border-[#E5EBE5] text-xs">
               <MapPin className="w-3.5 h-3.5 text-[#087A4B]" />
-              <span className="font-bold text-[#25352C]">{d.pilotLocation}</span>
+              <span className="font-bold text-[#25352C]">{d.pilotLocation} (5.2ac)</span>
               <span className="text-[#68766C] text-[11px]">{d.pilotDistrict}</span>
             </div>
 
@@ -218,29 +234,29 @@ export default function AppSidebarLayout({
             {onLogout && (
               <button
                 onClick={onLogout}
-                title="Sign Out to Main Website"
-                className="px-3 py-1.5 rounded-xl bg-[#FFF1F0] border border-[#D94B45]/20 text-[#D94B45] hover:bg-[#D94B45] hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                title="Sign out"
+                className="px-3 py-1.5 rounded-xl border border-red-200 text-red-700 bg-red-50 hover:bg-red-100 text-xs font-semibold flex items-center gap-1.5 transition-colors"
               >
                 <LogOut className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
             )}
 
-            {/* User Profile Pill */}
+            {/* Farmer Avatar */}
             <div className="flex items-center gap-2.5 pl-2 border-l border-[#E5EBE5]">
-              <div className="w-9 h-9 rounded-full bg-[#DDF3E6] text-[#073B2A] flex items-center justify-center font-bold text-xs shadow-sm border border-[#087A4B]/20">
+              <div className="w-8 h-8 rounded-full bg-[#DDF3E6] text-[#073B2A] font-bold text-xs flex items-center justify-center border border-[#087A4B]/20">
                 GK
               </div>
-              <div className="hidden sm:block text-left">
-                <p className="text-xs font-bold text-[#25352C]">{d.farmerName}</p>
-                <p className="text-[10px] text-[#087A4B] font-semibold">{d.farmerRole}</p>
+              <div className="hidden xl:block text-left text-xs">
+                <span className="font-bold text-[#25352C] block leading-tight">{d.farmerName}</span>
+                <span className="text-[#087A4B] text-[10px] font-medium leading-tight">{d.farmerRole}</span>
               </div>
             </div>
           </div>
         </header>
 
         {/* WORKSPACE BODY */}
-        <main className="flex-1 p-6 sm:p-8 bg-[#F5F7F3]">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full pt-20 lg:pt-6">
           {children}
         </main>
       </div>

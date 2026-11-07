@@ -33,6 +33,29 @@ class FarmBudget(BaseModel):
     spent_inr: float = Field(default=0.0, ge=0.0, description="Expenditure so far")
     remaining_inr: float = Field(ge=0.0, description="Remaining liquidity")
 
+class ActivityEvent(BaseModel):
+    id: str
+    farm_id: str
+    plot_id: Optional[str] = None
+    operation: str
+    status: str = "completed"  # completed, partial, skipped
+    water_used_liters: float = 0.0
+    cost_inr: float = 0.0
+    date: str
+    notes: Optional[str] = None
+    recorded_at: str
+
+class ScenarioSnapshot(BaseModel):
+    id: str
+    farm_id: str
+    name: str
+    rainfall_anomaly_pct: float
+    temp_offset_c: float
+    water_cap_pct: float
+    budget_limit_inr: float
+    recommended_strategy: str
+    created_at: str
+
 class Farm(BaseModel):
     id: str
     name: str
@@ -41,10 +64,10 @@ class Farm(BaseModel):
     state: str = "Maharashtra"
     district: str = "Pune"
     taluka: str = "Baramati"
-    village: str = "Malegaon"
-    latitude: float = 18.1500
-    longitude: float = 74.5800
-    total_area_acres: float = Field(gt=0.0)
+    village: str = "Malegaon Khurd"
+    latitude: float = 18.1512
+    longitude: float = 74.5824
+    total_area_acres: float = Field(default=5.2, gt=0.0)
     plots: List[Plot] = []
     water_assets: List[WaterAsset] = []
     budget: FarmBudget

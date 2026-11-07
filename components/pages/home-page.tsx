@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Droplets, Leaf, Wind, Zap } from "lucide-react"
-import FarmBot from "@/components/chatbot/farm-bot"
 import MissionStatement from "@/components/sections/mission-statement"
 import SmartFarmingSolutions from "@/components/sections/smart-farming-solutions"
 import { TrustMarquee, StatsStrip, HomeClosingSections } from "@/components/sections"
@@ -230,8 +229,6 @@ export default function HomePage({ language, user, onGetStarted, onWatchDemo }: 
         </div>
       </section>
 
-      {/* Floating Chatbot */}
-      <FarmBot />
     </div>
   )
 }

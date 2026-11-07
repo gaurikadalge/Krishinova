@@ -1,0 +1,13 @@
+[
+  {
+    "id": "scen-1",
+    "farm_id": "farm-mh-001",
+    "name": "Delayed Monsoon Break + Heatwave (+2.5\u00b0C)",
+    "rainfall_anomaly_pct": -40.0,
+    "temp_offset_c": 2.5,
+    "water_cap_pct": 60.0,
+    "budget_limit_inr": 28000.0,
+    "recommended_strategy": "Strategy B: Deficit Drip Irrigation + Mulching",
+    "created_at": "2026-11-02 11:20:00"
+  }
+]

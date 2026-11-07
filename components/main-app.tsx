@@ -8,6 +8,7 @@ import MyFarmView from "./dashboard/my-farm-view"
 import PlotRegistrationModal from "./dashboard/plot-registration-modal"
 import ScenarioSimulator from "./dashboard/scenario-simulator"
 import ActionPlanView from "./dashboard/action-plan-view"
+import CropDemandView from "./dashboard/crop-demand-view"
 import OllamaAssistant from "./dashboard/ollama-assistant"
 import SatellitePage from "./pages/satellite-page"
 import WeatherPage from "./pages/weather-page"
@@ -42,6 +43,13 @@ export default function MainApp({ user, onLogout, onBackToHome }: MainAppProps) 
             language={language}
             onNavigate={setCurrentPage}
             onOpenPlotModal={() => setIsPlotModalOpen(true)}
+          />
+        )
+      case "crop-demand":
+        return (
+          <CropDemandView
+            language={language}
+            onNavigateToScenario={() => setCurrentPage("twin")}
           />
         )
       case "my-farm":

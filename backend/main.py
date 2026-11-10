@@ -76,7 +76,7 @@ def read_root():
     return {
         'project': 'Krishinova',
         'tagline': 'Understand the farm. Anticipate climate risk. Plan with the resources available.',
-        'competition': 'Indradhanu - PCCOE International Grand Challenge',
+        'domain': 'AgriTech and Water Resilience',
         'status': 'online',
         'version': '2.4.0'
     }

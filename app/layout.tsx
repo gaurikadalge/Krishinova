@@ -18,9 +18,18 @@ const instrumentSerif = Instrument_Serif({
 })
 
 export const metadata: Metadata = {
-  title: "Krishinova - Smart Farming",
-  description: "AI-powered decision support system for precision agriculture",
-  generator: "v0.app",
+  title: "KrishiNova — Autonomous Agro-Climatic Digital Twin & Botanical Intelligence",
+  description: "Climate-resilient agricultural decision support platform integrating Sentinel-2 satellite telemetry, FAO-56 dual crop-water balance physics, and 22-language neural voice intelligence for smallholder farmers.",
+  icons: {
+    icon: "/placeholder-logo.svg",
+  },
+  openGraph: {
+    title: "KrishiNova — Botanical Intelligence & Farm Digital Twin",
+    description: "Understand the farm. Anticipate climate risk. Plan with the resources available.",
+    url: "https://krishinova-sand.vercel.app",
+    siteName: "KrishiNova",
+    type: "website",
+  },
 }
 
 export default function RootLayout({

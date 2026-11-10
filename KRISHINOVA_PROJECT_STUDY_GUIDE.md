@@ -1,6 +1,7 @@
 # KrishiNova: Comprehensive Project Study Guide & Presentation Playbook
 **PCCOE International Grand Challenge: 2026 (Indradhanu 2026)**  
 **Theme:** AI for Climate Change • **Domain:** AgriTech & Water Resilience  
+**Live Production URL:** [https://krishinova-sand.vercel.app](https://krishinova-sand.vercel.app)  
 **Repository:** [https://github.com/gaurikadalge/Krishinova.git](https://github.com/gaurikadalge/Krishinova.git)  
 **Target Pilot Context:** Malegaon Khurd, Baramati, Pune District, Maharashtra (18.1462° N, 74.5885° E — 5.2 Acres)
 

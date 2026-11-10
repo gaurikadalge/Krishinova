@@ -37,3 +37,12 @@ backend/venv/
 # os
 .DS_Store
 Thumbs.db
+
+# Internal presentation, competition submission files & study scripts (retained locally)
+*.pptx
+*.pdf
+*INDRADHANU*
+*KRISHINOVA*PLAN*
+*STUDY_GUIDE*
+*VIDEO_SCRIPT*
+*Study_Guide*

@@ -14,7 +14,8 @@ import {
   Check,
   X,
   History,
-  AlertTriangle
+  AlertTriangle,
+  Sparkles
 } from "lucide-react"
 import type { Language } from "../language-context"
 import { dictionary } from "../translations"
@@ -28,6 +29,7 @@ export default function ActionPlanView({ language, onBackToSim }: ActionPlanProp
   const d = dictionary[language] || dictionary.en
 
   const [activities, setActivities] = useState<any[]>([])
+  const [activeScenarioInfo, setActiveScenarioInfo] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedTask, setSelectedTask] = useState<any>(null)
   const [successBanner, setSuccessBanner] = useState<string | null>(null)
@@ -88,13 +90,37 @@ export default function ActionPlanView({ language, onBackToSim }: ActionPlanProp
     },
   ]
 
-  // Fetch logged activities on mount
+  // Fetch logged activities on mount & read active scenario
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedActivities = localStorage.getItem("krishinova_logged_activities")
+      if (storedActivities) {
+        try {
+          const parsed = JSON.parse(storedActivities)
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setActivities(parsed)
+          }
+        } catch {}
+      }
+
+      const storedScenario = localStorage.getItem("krishinova_active_scenario")
+      if (storedScenario) {
+        try {
+          setActiveScenarioInfo(JSON.parse(storedScenario))
+        } catch {}
+      }
+    }
+
     const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001"
     fetch(`${apiBase}/api/farms/farm-mh-001/activities`)
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) setActivities(data)
+        if (Array.isArray(data) && data.length > 0) {
+          setActivities(data)
+          if (typeof window !== "undefined") {
+            localStorage.setItem("krishinova_logged_activities", JSON.stringify(data))
+          }
+        }
       })
       .catch((err) => console.warn("Could not fetch activities", err))
   }, [])
@@ -126,26 +152,26 @@ export default function ActionPlanView({ language, onBackToSim }: ActionPlanProp
       recorded_at: new Date().toISOString().replace("T", " ").substring(0, 19)
     }
 
+    // Persist locally in state and localStorage immediately
+    const updatedList = [newActivity, ...activities]
+    setActivities(updatedList)
+    if (typeof window !== "undefined") {
+      localStorage.setItem("krishinova_logged_activities", JSON.stringify(updatedList))
+    }
+
     try {
-      const res = await fetch(`${apiBase}/api/farms/farm-mh-001/activities`, {
+      await fetch(`${apiBase}/api/farms/farm-mh-001/activities`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newActivity),
       })
-      const saved = await res.json()
-      setActivities([saved, ...activities])
-      setSuccessBanner(d.activityLoggedSuccess || "Activity recorded & Digital Twin updated!")
-      setIsModalOpen(false)
-      setTimeout(() => setSuccessBanner(null), 5000)
     } catch (err) {
-      console.warn("Failed to persist activity to backend", err)
-      // Fallback local update
-      setActivities([newActivity, ...activities])
+      console.warn("Backend offline, saved activity in local storage", err)
+    } finally {
       setSuccessBanner(d.activityLoggedSuccess || "Activity recorded & Digital Twin updated!")
       setIsModalOpen(false)
-      setTimeout(() => setSuccessBanner(null), 5000)
-    } finally {
       setSubmitting(false)
+      setTimeout(() => setSuccessBanner(null), 5000)
     }
   }
 
@@ -161,6 +187,28 @@ export default function ActionPlanView({ language, onBackToSim }: ActionPlanProp
           <button onClick={() => setSuccessBanner(null)} className="text-[#073B2A] hover:opacity-70">
             <X className="w-4 h-4" />
           </button>
+        </div>
+      )}
+
+      {/* Active Adopted Scenario Banner */}
+      {activeScenarioInfo?.strategy && (
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-[#DDF3E6] via-white to-[#EBF3FC] border border-[#087A4B]/30 text-[#073B2A] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#087A4B] text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xs font-bold block text-[#073B2A]">
+                Active Adopted Policy: {activeScenarioInfo.strategy.name}
+              </span>
+              <span className="text-[11px] text-[#475549] block">
+                Calibrated under {activeScenarioInfo.scenarioId?.replace("_", " ")} scenario &bull; Water: {activeScenarioInfo.strategy.waterUseLiters?.toLocaleString()} L &bull; Estimated Cost: ₹{activeScenarioInfo.strategy.cost?.toLocaleString()}
+              </span>
+            </div>
+          </div>
+          <span className="text-[10px] px-3 py-1 rounded-full bg-[#087A4B] text-white font-bold self-start sm:self-auto shadow-xs">
+            Feasible & Recommended
+          </span>
         </div>
       )}
 

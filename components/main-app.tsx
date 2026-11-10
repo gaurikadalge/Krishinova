@@ -27,6 +27,35 @@ export default function MainApp({ user, onLogout, onBackToHome }: MainAppProps) 
   const { language, setLanguage } = useLanguage()
 
   const handlePlotAdded = (newPlot: any) => {
+    // 1. Persist to localStorage so it survives refresh & restart
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("krishinova_registered_plots")
+        const existing = stored ? JSON.parse(stored) : []
+        const formattedPlot = {
+          id: newPlot.id || `plot-${Date.now()}`,
+          name: newPlot.name,
+          acres: Number(newPlot.area_acres),
+          crop: newPlot.current_crop,
+          variety: newPlot.variety,
+          stage: newPlot.growth_stage,
+          sowingDate: newPlot.sowing_date,
+          irrigation: newPlot.irrigation_method,
+          soilType: newPlot.soil?.soil_type || "Medium Deep Black (Vertisol)",
+          ph: newPlot.soil?.ph || 7.2,
+          organicCarbon: `${newPlot.soil?.organic_carbon_pct || 0.5}%`,
+          soilMoisture: "Medium",
+          aerialImg: "/crops/soybean-plot.jpg",
+          ndviScore: 0.55,
+          provenance: "Farmer Registered",
+        }
+        localStorage.setItem("krishinova_registered_plots", JSON.stringify([...existing, formattedPlot]))
+      } catch (e) {
+        console.warn("Failed to persist plot to localStorage", e)
+      }
+    }
+
+    // 2. Sync to backend API if reachable
     const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001"
     fetch(`${apiBase}/api/farms/farm-mh-001/plots`, {
       method: "POST",

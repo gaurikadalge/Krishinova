@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   MapPin,
   CheckCircle2,
@@ -31,7 +31,7 @@ export default function MyFarmView({
   const [activeTab, setActiveTab] = useState<"plots" | "assets" | "identity" | "settings">("plots")
   const d = dictionary[language] || dictionary.en
 
-  const plots = [
+  const initialPlots = [
     {
       id: "plot-1",
       name: d.plot1Title,
@@ -84,6 +84,22 @@ export default function MyFarmView({
       provenance: "Regional Assumption"
     },
   ]
+
+  const [plots, setPlots] = useState(initialPlots)
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("krishinova_registered_plots")
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored)
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setPlots([...initialPlots, ...parsed])
+          }
+        } catch {}
+      }
+    }
+  }, [])
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">

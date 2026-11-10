@@ -36,7 +36,6 @@
   - [1. Frontend Setup (Next.js 15)](#1-frontend-setup-nextjs-15)
   - [2. Backend Setup (FastAPI & ML Engine)](#2-backend-setup-fastapi--ml-engine)
 - [Quantified Ecological & Economic Impact](#-quantified-ecological--economic-impact)
-- [Authors & Acknowledgments](#-authors--acknowledgments)
 - [License](#-license)
 
 ---
@@ -251,16 +250,6 @@ The interactive FastAPI Swagger documentation will be available at [http://local
 - 💰 **Input Cost Reduction:** Reduces operational farming expenditure by **₹12,500/cycle** via optimized pumping schedules and targeted fertigation.
 - 🗣 **Vernacular Inclusivity:** Bridges the digital divide across **22 official Indian languages** with authentic rural speech synthesis.
 - ⚡ **Zero Sensor Overhead:** ₹0 ground hardware expense—operates via orbital satellite constellations and mobile devices.
-
----
-
-## 👥 Authors & Acknowledgments
-
-- **Gauri Kadalge** — *Project Lead & Domain Architect* ([GitHub](https://github.com/gaurikadalge))
-- **Utkarsh Ghom** — *AI & Full-Stack Architect* ([GitHub](https://github.com/UtkarshGhom))
-
-*Department of Artificial Intelligence & Data Science*  
-*Pimpri Chinchwad College of Engineering (PCCOE), Pune, India*
 
 ---
 
